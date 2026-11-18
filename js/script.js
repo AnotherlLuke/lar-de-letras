@@ -2,6 +2,7 @@
 document.documentElement.classList.add('js');
 
 document.addEventListener('DOMContentLoaded', () => {
+    medirHeader();
     destacarGeneroVisivel();
     alternarQuantidade();
     atualizarQuantidadeAoMudar();
@@ -46,6 +47,16 @@ function corDoTexto(hex) {
         return soma + [0.2126, 0.7152, 0.0722][i] * linear;
     }, 0);
     return 1.05 / (luz + 0.05) >= (luz + 0.05) / 0.0662 ? '#FFFFFF' : '#1D2238';
+}
+
+// Header fixo: guarda a altura real dele (muda no celular e quando a tela muda de tamanho),
+// para a estante, o resumo do carrinho e os links #genero pararem logo abaixo.
+function medirHeader() {
+    const topo = document.querySelector('.topo');
+    if (!topo || !('ResizeObserver' in window)) return;
+    new ResizeObserver(() => {
+        document.documentElement.style.setProperty('--altura-topo', topo.offsetHeight + 'px');
+    }).observe(topo);
 }
 
 // Página inicial: banner com flechas e bolinhas. Sem JavaScript, os slides rolam para o lado.
