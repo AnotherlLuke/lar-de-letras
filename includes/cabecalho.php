@@ -27,7 +27,7 @@ $aviso        = pegar_aviso();
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600;7..72,700&display=swap">
-    <link rel="stylesheet" href="css/estilo.css?v=16">
+    <link rel="stylesheet" href="css/estilo.css?v=17">
     <script src="js/script.js?v=10" defer></script>
 </head>
 <body>

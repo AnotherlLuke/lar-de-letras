@@ -1837,7 +1837,7 @@ input[type="number"] {
 
 .rodape-interno {
     display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) auto; /* marca à esquerda, endereço à direita */
     gap: 40px;
     max-width: var(--largura);
     margin: 0 auto;
@@ -1857,21 +1857,6 @@ input[type="number"] {
 
 .rodape-marca p {
     color: var(--lavanda);
-}
-
-.rodape-links {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.rodape-links a {
-    text-decoration: none;
-}
-
-.rodape-links a:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
 }
 
 .rodape-endereco {

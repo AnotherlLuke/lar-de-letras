@@ -8,17 +8,6 @@
             <p><strong>Lar de Letras</strong><br>Livros novos, seminovos e digitais, com entrega para todo o Brasil.</p>
         </div>
 
-        <nav class="rodape-links" aria-label="Rodapé">
-            <a href="index.php">Início</a>
-            <a href="index.php#catalogo">Catálogo</a>
-            <a href="carrinho.php">Carrinho</a>
-            <?php if (usuario_logado()): ?>
-                <a href="sair.php">Sair</a>
-            <?php else: ?>
-                <a href="login.php">Entrar ou criar conta</a>
-            <?php endif; ?>
-        </nav>
-
         <address class="rodape-endereco">
             R. Amador Bueno, 389/491, Sala 315<br>
             Santo Amaro, São Paulo, SP<br>
