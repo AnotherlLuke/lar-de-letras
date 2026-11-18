@@ -7,6 +7,7 @@
 :root {
     --tinta: #241B3D;
     --papel: #FFFFFF;
+    --fundo: #F1F2F4;         /* fundo do site; os blocos de conteúdo ficam brancos por cima */
     --roxo: #6A3DB8;          /* cor da marca: header, botões, e-book */
     --roxo-escuro: #522C96;
     --roxo-noite: #2B1B4D;    /* rodapé */
@@ -38,7 +39,7 @@
     --t-49: 3.052rem;
 
     --raio: 6px;
-    --largura: 1560px;
+    --largura: 1800px;
     --margem: 40px;
 }
 
@@ -49,14 +50,14 @@
 }
 
 html {
-    font-size: 106.25%; /* 17px: escala um pouco maior */
+    font-size: 112.5%; /* 18px: escala maior, menos espaço sobrando */
     scroll-behavior: smooth;
     scroll-padding-top: 24px;
 }
 
 body {
     margin: 0;
-    background: var(--papel);
+    background: var(--fundo);
     color: var(--tinta);
     font-family: var(--sans);
     font-size: var(--t-16);
@@ -324,7 +325,7 @@ p {
     width: 100%;
     max-width: var(--largura);
     margin: 0 auto;
-    padding: 40px var(--margem) 96px;
+    padding: 40px var(--margem) 64px;
 }
 
 .conteudo {
@@ -333,8 +334,8 @@ p {
 
 .com-estante {
     display: grid;
-    grid-template-columns: 240px minmax(0, 1fr);
-    gap: 64px;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 80px;
     align-items: start;
 }
 
@@ -413,13 +414,29 @@ p {
 
 /* ---------- Seções e prateleiras ---------- */
 
+/* blocos de conteúdo: superfícies brancas sobre o fundo cinza */
+.secao,
+.ficha,
+.estante,
+.admin,
+.acesso-form {
+    padding: 36px 40px;
+    border-radius: 10px;
+    background: var(--papel);
+    box-shadow: 0 1px 2px rgba(29, 34, 56, 0.06);
+}
+
+.estante {
+    padding: 24px 20px 20px;
+}
+
 .secao + .secao,
 .vitrine + .secao,
 .ficha + .secao,
 .secao + #catalogo,
 .vitrine + #catalogo,
 #catalogo .secao + .secao {
-    margin-top: 72px;
+    margin-top: 28px;
 }
 
 .secao-titulo {
@@ -1106,7 +1123,7 @@ input[type="number"] {
 /* ---------- Login ---------- */
 
 .acesso {
-    max-width: 760px;
+    max-width: 900px;
     margin: 24px auto 0;
 }
 
@@ -1118,7 +1135,7 @@ input[type="number"] {
 .acesso-formularios {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 40px;
+    gap: 28px;
     margin-top: 40px;
 }
 
@@ -1908,6 +1925,9 @@ input[type="number"] {
         margin: 0 calc(var(--margem) * -1);
         padding: 0 var(--margem);
         overflow-x: auto;
+        border-radius: 0;
+        background: none;
+        box-shadow: none;
     }
 
     .estante-titulo {
@@ -1982,6 +2002,13 @@ input[type="number"] {
 }
 
 @media (max-width: 640px) {
+    .secao,
+    .ficha,
+    .admin,
+    .acesso-form {
+        padding: 24px 20px;
+    }
+
     .marca-nome {
         font-size: var(--t-20);
     }
