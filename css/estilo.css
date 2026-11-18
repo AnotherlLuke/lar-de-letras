@@ -1,0 +1,1907 @@
+/* ==========================================================
+   Lar de Letras — folha de estilo
+   Ideia: a estante. Os gêneros são lombadas empilhadas à
+   esquerda; os livros ficam "em pé" sobre prateleiras.
+   ========================================================== */
+
+:root {
+    --tinta: #241B3D;
+    --papel: #FFFFFF;
+    --roxo: #6A3DB8;          /* cor da marca: header, botões, e-book */
+    --roxo-escuro: #522C96;
+    --roxo-noite: #2B1B4D;    /* rodapé */
+    --lavanda: #E6DCF7;       /* texto claro sobre o roxo */
+    --prateleira: #F4F0FB;
+    --tabua: #DDD3EE;
+    --grafite: #5E5873;
+    --linha: #E1DBEC;
+    --ambar: #F6C344;
+    --digital: var(--roxo);
+    --digital-claro: #F1EBF9;
+    --erro: #B42318;
+    --erro-claro: #FDECEA;
+    --ok: #1F6B47;
+    --ok-claro: #E8F4EE;
+    --foco: #2369B0;
+    --capa: 3 / 4;            /* padrão das capas: 900 x 1200 px */
+
+    --serif: "Literata", Georgia, "Times New Roman", serif;
+    --sans: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+    /* escala 1.25 */
+    --t-14: 0.875rem;
+    --t-16: 1rem;
+    --t-20: 1.25rem;
+    --t-25: 1.5625rem;
+    --t-31: 1.953rem;
+    --t-39: 2.441rem;
+    --t-49: 3.052rem;
+
+    --raio: 6px;
+    --largura: 1560px;
+    --margem: 40px;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 106.25%; /* 17px: escala um pouco maior */
+    scroll-behavior: smooth;
+    scroll-padding-top: 24px;
+}
+
+body {
+    margin: 0;
+    background: var(--papel);
+    color: var(--tinta);
+    font-family: var(--sans);
+    font-size: var(--t-16);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+a {
+    color: inherit;
+}
+
+h1, h2, h3 {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+p {
+    margin: 0;
+}
+
+:focus-visible {
+    outline: 3px solid var(--foco);
+    outline-offset: 3px;
+}
+
+.so-leitor {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+.pular {
+    position: absolute;
+    left: 16px;
+    top: -48px;
+    z-index: 10;
+    padding: 8px 16px;
+    background: var(--tinta);
+    color: var(--papel);
+    border-radius: var(--raio);
+}
+
+.pular:focus {
+    top: 8px;
+}
+
+/* ---------- Botões ---------- */
+
+.botao {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 28px;
+    border: 2px solid var(--roxo);
+    border-radius: var(--raio);
+    background: var(--roxo);
+    color: var(--papel);
+    font: 600 var(--t-16) / 1 var(--sans);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.botao:hover {
+    background: var(--roxo-escuro);
+    border-color: var(--roxo-escuro);
+}
+
+.botao-largo {
+    width: 100%;
+}
+
+.botao-contorno {
+    background: transparent;
+    color: var(--roxo);
+}
+
+.botao-contorno:hover {
+    background: var(--prateleira);
+    border-color: var(--roxo);
+}
+
+.botao-claro {
+    background: var(--papel);
+    border-color: var(--papel);
+    color: var(--tinta);
+}
+
+.botao-claro:hover {
+    background: var(--prateleira);
+    border-color: var(--prateleira);
+    color: var(--tinta);
+}
+
+.botao-texto {
+    padding: 4px 0;
+    border: 0;
+    background: none;
+    color: var(--grafite);
+    font: 500 var(--t-14) var(--sans);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+.botao-texto:hover {
+    color: var(--tinta);
+}
+
+/* ---------- Topo ---------- */
+
+.topo {
+    background: var(--roxo);
+    color: var(--papel);
+}
+
+.topo :focus-visible {
+    outline-color: var(--ambar);
+}
+
+.topo-interno {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    max-width: var(--largura);
+    margin: 0 auto;
+    padding: 22px var(--margem);
+}
+
+.marca {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.marca-nome {
+    font: 700 var(--t-25) / 1.1 var(--serif);
+    letter-spacing: -0.01em;
+}
+
+.marca-sub {
+    color: var(--lavanda);
+    font-size: var(--t-14);
+}
+
+.busca {
+    display: flex;
+    flex: 1;
+    max-width: 520px;
+    border: 2px solid transparent;
+    border-radius: var(--raio);
+    background: var(--papel);
+    color: var(--tinta);
+}
+
+.busca:focus-within {
+    border-color: var(--ambar);
+}
+
+.busca input {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 14px;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    color: inherit;
+}
+
+.busca input:focus {
+    outline: none;
+}
+
+.busca button {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    border: 0;
+    background: none;
+    color: var(--tinta);
+    cursor: pointer;
+}
+
+.conta {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-left: auto;
+    font-weight: 500;
+}
+
+.conta a {
+    text-underline-offset: 3px;
+}
+
+.conta-nome {
+    color: var(--lavanda);
+}
+
+.sacola {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+}
+
+.sacola-total {
+    position: absolute;
+    top: 2px;
+    right: 0;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 10px;
+    background: var(--ambar);
+    color: var(--tinta);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 20px;
+    text-align: center;
+}
+
+/* ---------- Avisos ---------- */
+
+.aviso {
+    max-width: var(--largura);
+    margin: 16px auto 0;
+    padding: 0 var(--margem);
+}
+
+.aviso p {
+    padding: 12px 16px;
+    border-left: 4px solid var(--ok);
+    border-radius: 0 var(--raio) var(--raio) 0;
+    background: var(--ok-claro);
+}
+
+.aviso-erro p {
+    border-left-color: var(--erro);
+    background: var(--erro-claro);
+}
+
+/* ---------- Estrutura com estante ---------- */
+
+.pagina {
+    max-width: var(--largura);
+    margin: 0 auto;
+    padding: 40px var(--margem) 96px;
+}
+
+.conteudo {
+    min-width: 0;
+}
+
+.com-estante {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 64px;
+    align-items: start;
+}
+
+/* ---------- A estante (lombadas empilhadas) ---------- */
+
+.estante {
+    position: sticky;
+    top: 24px;
+}
+
+.estante-titulo {
+    margin-bottom: 16px;
+    font-size: var(--t-20);
+}
+
+.pilha {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.lombada {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 42px;
+    padding: 8px 14px 8px 22px;
+    border-radius: 2px 5px 5px 2px;
+    background: var(--cor);
+    color: var(--cor-texto);
+    font-weight: 600;
+    font-size: var(--t-14);
+    line-height: 1.2;
+    text-decoration: none;
+    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.18);
+    transition: transform 220ms ease;
+}
+
+/* filetes da lombada, como numa capa dura */
+.lombada::before,
+.lombada::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: currentColor;
+    opacity: 0.35;
+}
+
+.lombada::before { left: 8px; }
+.lombada::after  { left: 12px; }
+
+.lombada-total {
+    font-weight: 500;
+    opacity: 0.8;
+    font-variant-numeric: tabular-nums;
+}
+
+/* cada livro da pilha tem uma largura e espessura um pouco diferente */
+.pilha li:nth-child(7n + 1) .lombada { width: 92%; margin-left: 4%; }
+.pilha li:nth-child(7n + 2) .lombada { width: 100%; min-height: 48px; }
+.pilha li:nth-child(7n + 3) .lombada { width: 86%; margin-left: 8%; }
+.pilha li:nth-child(7n + 4) .lombada { width: 96%; min-height: 46px; }
+.pilha li:nth-child(7n + 5) .lombada { width: 88%; margin-left: 2%; }
+.pilha li:nth-child(7n + 6) .lombada { width: 94%; margin-left: 6%; min-height: 40px; }
+.pilha li:nth-child(7n + 7) .lombada { width: 100%; min-height: 52px; }
+
+.lombada:hover,
+.lombada.ativa {
+    transform: translateX(14px);
+}
+
+.tabua {
+    height: 10px;
+    margin-top: 3px;
+    border-radius: 2px;
+    background: var(--tabua);
+}
+
+/* ---------- Seções e prateleiras ---------- */
+
+.secao + .secao,
+.vitrine + .secao,
+.ficha + .secao,
+.secao + #catalogo,
+.vitrine + #catalogo,
+#catalogo .secao + .secao {
+    margin-top: 72px;
+}
+
+.secao-titulo {
+    font-size: var(--t-31);
+    letter-spacing: -0.01em;
+}
+
+.secao-genero .secao-titulo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* mini lombada na cor do gênero, ligando a seção à estante */
+.secao-genero .secao-titulo::before {
+    content: "";
+    flex-shrink: 0;
+    width: 12px;
+    height: 32px;
+    border-radius: 2px 3px 3px 2px;
+    background: var(--cor);
+}
+
+.secao-info {
+    margin-top: 4px;
+    color: var(--grafite);
+    font-size: var(--t-14);
+}
+
+.secao-genero .secao-info {
+    margin-left: 26px;
+}
+
+.prateleira {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    column-gap: 36px;
+    row-gap: 56px;
+    margin-top: 28px;
+}
+
+.vazio {
+    margin-top: 16px;
+    color: var(--grafite);
+    font-size: var(--t-20);
+    max-width: 60ch;
+}
+
+.vazio a {
+    color: var(--tinta);
+    font-weight: 600;
+    text-underline-offset: 3px;
+}
+
+/* ---------- Livro na prateleira ---------- */
+
+.livro-capa {
+    position: relative;
+    display: block;
+    padding-bottom: 10px;
+}
+
+/* a tábua sob as capas: atravessa o espaço entre colunas */
+.livro-capa::after {
+    content: "";
+    position: absolute;
+    left: -18px;
+    right: -18px;
+    bottom: 0;
+    height: 10px;
+    background: var(--tabua);
+}
+
+.capa {
+    position: relative;
+    display: block;
+    max-width: 100%;
+}
+
+.capa img {
+    width: 100%;
+    aspect-ratio: var(--capa);
+    object-fit: cover;
+    border-radius: 1px 3px 3px 1px;
+    box-shadow: 0 1px 2px rgba(29, 34, 56, 0.25), 3px 0 0 -1px rgba(29, 34, 56, 0.12);
+    transition: transform 200ms ease;
+}
+
+.livro-capa:hover img {
+    transform: translateY(-6px);
+}
+
+.tag-digital {
+    position: absolute;
+    top: 10px;
+    left: -6px;
+    padding: 3px 9px 4px;
+    border-radius: 2px 4px 4px 2px;
+    background: var(--digital);
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    box-shadow: 0 1px 2px rgba(29, 34, 56, 0.3);
+}
+
+.livro-titulo {
+    margin-top: 14px;
+    font-size: var(--t-16);
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.livro-titulo a {
+    text-decoration: none;
+}
+
+.livro-titulo a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.livro-autor {
+    margin-top: 2px;
+    color: var(--grafite);
+    font-size: var(--t-14);
+}
+
+.livro-preco {
+    margin-top: 8px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.esgotado {
+    color: var(--grafite);
+    font-weight: 500;
+    font-size: var(--t-14);
+}
+
+.livro-autor + .livro-ebook {
+    margin-top: 8px;
+}
+
+.livro-ebook {
+    color: var(--digital);
+    font-size: var(--t-14);
+    font-weight: 600;
+}
+
+/* ---------- Promoção ---------- */
+
+.preco-antigo {
+    color: var(--grafite);
+    font-weight: 500;
+    font-size: 0.875em;
+}
+
+.selo-desconto {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: var(--erro);
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+    vertical-align: 1px;
+    white-space: nowrap;
+}
+
+.livro-ebook .preco-antigo {
+    color: var(--digital);
+    opacity: 0.75;
+}
+
+.formato-preco .preco-antigo {
+    display: block;
+    text-align: right;
+}
+
+.item-formato .selo-desconto {
+    margin-left: 6px;
+}
+
+/* ---------- Vitrine (destaque da home) ---------- */
+
+.vitrine {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.vitrine-trilho {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+}
+
+.vitrine-trilho::-webkit-scrollbar {
+    display: none;
+}
+
+.vitrine-slide {
+    flex: 0 0 100%;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 56px;
+    align-items: center;
+    min-height: 440px;
+    padding: 48px 96px 64px;
+    scroll-snap-align: start;
+    background: var(--cor);
+    color: var(--cor-texto);
+}
+
+.vitrine-capa img,
+.vitrine-capa .capa-desenhada {
+    width: 240px;
+    aspect-ratio: var(--capa);
+    object-fit: cover;
+    border-radius: 2px 4px 4px 2px;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35);
+    transform: rotate(-2deg);
+}
+
+.vitrine-acao {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 24px;
+}
+
+.vitrine-preco {
+    font-size: var(--t-20);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.vitrine-preco .preco-antigo {
+    color: inherit;
+    opacity: 0.75;
+}
+
+.vitrine-seta {
+    position: absolute;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    margin-top: -24px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--tinta);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+.vitrine-seta:hover {
+    background: var(--papel);
+}
+
+.vitrine-anterior { left: 24px; }
+.vitrine-proxima  { right: 24px; }
+
+.vitrine-pontos {
+    position: absolute;
+    left: 50%;
+    bottom: 22px;
+    display: flex;
+    gap: 6px;
+    transform: translateX(-50%);
+}
+
+/* bolinha com área de toque maior que o desenho */
+.vitrine-pontos button {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+}
+
+.vitrine-pontos button::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+}
+
+.vitrine-pontos button[aria-current="true"]::before {
+    background: var(--papel);
+}
+
+/* sem JavaScript, os slides rolam para o lado e os controles somem */
+html:not(.js) .vitrine-seta,
+html:not(.js) .vitrine-pontos {
+    display: none;
+}
+
+.vitrine-texto {
+    max-width: 36em;
+}
+
+.vitrine-contexto .selo-desconto {
+    margin-left: 4px;
+}
+
+.vitrine-contexto {
+    font-weight: 600;
+    opacity: 0.85;
+}
+
+.vitrine-titulo {
+    margin-top: 8px;
+    font-size: var(--t-49);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+}
+
+.vitrine-autor {
+    margin-top: 8px;
+    font-size: var(--t-20);
+}
+
+.vitrine-descricao {
+    margin: 20px 0 28px;
+    font-family: var(--serif);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+}
+
+/* ---------- Página do livro ---------- */
+
+.ficha {
+    display: grid;
+    grid-template-columns: minmax(240px, 400px) minmax(0, 1fr);
+    gap: 64px;
+    align-items: start;
+}
+
+.ficha-capa img {
+    width: 100%;
+    aspect-ratio: var(--capa);
+    object-fit: cover;
+    border-radius: 2px 5px 5px 2px;
+    box-shadow: 0 2px 4px rgba(29, 34, 56, 0.2), 0 16px 32px rgba(29, 34, 56, 0.18);
+}
+
+.ficha-info {
+    max-width: 640px;
+}
+
+.ficha-genero {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--grafite);
+    font-size: var(--t-14);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.ficha-genero::before {
+    content: "";
+    width: 8px;
+    height: 20px;
+    border-radius: 1px 2px 2px 1px;
+    background: var(--cor);
+}
+
+.ficha-genero:hover {
+    color: var(--tinta);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.ficha-titulo {
+    margin-top: 12px;
+    font-size: var(--t-39);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+}
+
+.ficha-autor {
+    margin-top: 6px;
+    color: var(--grafite);
+    font-size: var(--t-20);
+}
+
+.ficha-descricao {
+    margin-top: 24px;
+    font-family: var(--serif);
+    font-size: 1.125rem;
+    line-height: 1.65;
+    max-width: 60ch;
+}
+
+.ficha-detalhes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 40px;
+    margin: 28px 0 0;
+    padding: 16px 0;
+    border-top: 1px solid var(--linha);
+    border-bottom: 1px solid var(--linha);
+}
+
+.ficha-detalhes dt {
+    color: var(--grafite);
+    font-size: var(--t-14);
+}
+
+.ficha-detalhes dd {
+    margin: 0;
+    font-weight: 600;
+}
+
+.compra {
+    margin-top: 32px;
+}
+
+.formatos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.formatos legend {
+    margin-bottom: 12px;
+    padding: 0;
+    font-weight: 600;
+}
+
+.formato {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 2px 10px;
+    padding: 16px;
+    border: 2px solid var(--linha);
+    border-radius: var(--raio);
+    cursor: pointer;
+}
+
+.formato input {
+    margin: 0;
+    accent-color: var(--tinta);
+}
+
+.formato-nome {
+    font-weight: 600;
+}
+
+.formato-preco {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.formato-nota {
+    grid-column: 2 / -1;
+    color: var(--grafite);
+    font-size: var(--t-14);
+}
+
+.formato:has(input:checked) {
+    border-color: var(--tinta);
+    background: var(--prateleira);
+}
+
+.formato-digital input {
+    accent-color: var(--digital);
+}
+
+.formato-digital:has(input:checked) {
+    border-color: var(--digital);
+    background: var(--digital-claro);
+}
+
+.formato.indisponivel {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.quantidade {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+    font-weight: 600;
+}
+
+input[type="number"] {
+    width: 76px;
+    padding: 10px 12px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio);
+    font: inherit;
+    font-weight: 600;
+    color: inherit;
+}
+
+.compra .botao {
+    margin-top: 24px;
+    min-width: 260px;
+}
+
+/* ---------- Carrinho ---------- */
+
+.carrinho-grade {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 48px;
+    align-items: start;
+    margin-top: 28px;
+}
+
+.itens {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--linha);
+}
+
+.item {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr) auto auto;
+    grid-template-areas:
+        "capa info quantidade preco"
+        "capa info quantidade remover";
+    gap: 4px 28px;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--linha);
+}
+
+.item-capa     { grid-area: capa; align-self: start; }
+.item-info     { grid-area: info; }
+.item-quantidade { grid-area: quantidade; }
+.item-preco    { grid-area: preco; }
+.item-remover  { grid-area: remover; justify-self: end; }
+
+.item-capa img {
+    width: 72px;
+    aspect-ratio: var(--capa);
+    object-fit: cover;
+    border-radius: 1px 2px 2px 1px;
+    box-shadow: 0 1px 2px rgba(29, 34, 56, 0.25);
+}
+
+.item-titulo {
+    font-size: var(--t-20);
+}
+
+.item-titulo a {
+    text-decoration: none;
+}
+
+.item-titulo a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.item-autor {
+    color: var(--grafite);
+    font-size: var(--t-14);
+}
+
+.item-formato {
+    margin-top: 6px;
+    font-size: var(--t-14);
+    font-weight: 600;
+}
+
+.item-formato.digital {
+    color: var(--digital);
+}
+
+.form-quantidade {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-quantidade label,
+.item-unico {
+    color: var(--grafite);
+    font-size: var(--t-14);
+}
+
+/* com JavaScript a quantidade é enviada sozinha */
+.js .atualizar {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+}
+
+.item-preco {
+    align-self: end;
+    text-align: right;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.item-preco span {
+    display: block;
+    color: var(--grafite);
+    font-size: var(--t-14);
+    font-weight: 500;
+}
+
+.resumo {
+    position: sticky;
+    top: 24px;
+    padding: 24px;
+    border-radius: 8px;
+    background: var(--prateleira);
+}
+
+.resumo h2 {
+    font-size: var(--t-25);
+}
+
+.resumo dl {
+    margin: 16px 0 20px;
+}
+
+.resumo dl div {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-variant-numeric: tabular-nums;
+}
+
+.resumo dd {
+    margin: 0;
+    font-weight: 600;
+}
+
+.resumo .resumo-total {
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--tabua);
+    font-size: var(--t-20);
+    font-weight: 700;
+}
+
+.resumo-nota {
+    margin: 12px 0;
+    color: var(--grafite);
+    font-size: var(--t-14);
+}
+
+.confirmacao {
+    max-width: 560px;
+    margin-top: 28px;
+    padding: 32px;
+    border-left: 4px solid var(--ok);
+    border-radius: 0 8px 8px 0;
+    background: var(--ok-claro);
+}
+
+.confirmacao h2 {
+    font-size: var(--t-25);
+}
+
+.confirmacao p {
+    margin: 12px 0 24px;
+}
+
+/* ---------- Login ---------- */
+
+.acesso {
+    max-width: 760px;
+    margin: 24px auto 0;
+}
+
+.acesso-titulo {
+    font-size: var(--t-31);
+    text-align: center;
+}
+
+.acesso-formularios {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-top: 40px;
+}
+
+.acesso-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.acesso-form h2 {
+    margin-bottom: 20px;
+    font-size: var(--t-20);
+}
+
+.acesso-form label {
+    margin-bottom: 6px;
+    font-size: var(--t-14);
+    font-weight: 600;
+}
+
+.acesso-form input:not([type="hidden"]) {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio);
+    background: var(--prateleira);
+    font: inherit;
+    color: inherit;
+}
+
+.acesso-form input:focus {
+    border-color: var(--tinta);
+    background: var(--papel);
+}
+
+.acesso-form .dica {
+    margin: -12px 0 18px;
+    color: var(--grafite);
+    font-size: var(--t-14);
+}
+
+.acesso-form .botao {
+    margin-top: auto;
+}
+
+.erro-form {
+    margin-bottom: 18px;
+    padding: 10px 14px;
+    border-left: 4px solid var(--erro);
+    border-radius: 0 var(--raio) var(--raio) 0;
+    background: var(--erro-claro);
+    font-size: var(--t-14);
+}
+
+/* ---------- Capa desenhada (livro sem imagem) ---------- */
+
+.capa-desenhada {
+    --cor: var(--tinta);
+    --cor-texto: #FFFFFF;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    aspect-ratio: var(--capa);
+    padding: 44px 14px 16px 22px; /* espaço para a etiqueta "digital" */
+    border-radius: 1px 3px 3px 1px;
+    background: var(--cor);
+    color: var(--cor-texto);
+    box-shadow: 0 1px 2px rgba(29, 34, 56, 0.25);
+    overflow: hidden;
+}
+
+/* filetes da lombada, iguais aos da estante */
+.capa-desenhada::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 8px;
+    width: 6px;
+    border-left: 2px solid currentColor;
+    border-right: 2px solid currentColor;
+    opacity: 0.35;
+}
+
+.capa-desenhada-titulo {
+    font: 700 var(--t-16) / 1.2 var(--serif);
+    overflow-wrap: anywhere;
+}
+
+.capa-desenhada-autor {
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0.85;
+}
+
+.vitrine-capa .capa-desenhada,
+.ficha-capa .capa-desenhada {
+    width: 100%;
+    padding: 28px 24px 24px 34px;
+}
+
+.vitrine-capa .capa-desenhada {
+    width: 240px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    transform: rotate(-2deg);
+}
+
+.ficha-capa .capa-desenhada-titulo {
+    font-size: var(--t-31);
+}
+
+.ficha-capa .capa-desenhada-autor {
+    font-size: var(--t-16);
+}
+
+.item-capa .capa-desenhada,
+.admin-capa .capa-desenhada {
+    width: 100%;
+    padding: 0;
+}
+
+.item-capa .capa-desenhada span,
+.admin-capa .capa-desenhada span {
+    display: none;
+}
+
+/* ---------- Administração ---------- */
+
+.admin-topo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.admin-topo .botao {
+    gap: 8px;
+}
+
+.tabela-rolagem {
+    overflow-x: auto;
+}
+
+.tabela-admin {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+}
+
+.tabela-admin th {
+    padding: 10px 16px 10px 0;
+    border-bottom: 2px solid var(--tinta);
+    color: var(--grafite);
+    font-size: var(--t-14);
+    font-weight: 600;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.tabela-admin td {
+    padding: 12px 16px 12px 0;
+    border-bottom: 1px solid var(--linha);
+    vertical-align: middle;
+}
+
+.admin-livro {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 240px;
+}
+
+.admin-livro a {
+    font: 600 var(--t-16) / 1.3 var(--serif);
+    text-decoration: none;
+}
+
+.admin-livro a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.admin-capa {
+    flex-shrink: 0;
+    width: 44px;
+}
+
+.admin-capa img {
+    width: 44px;
+    aspect-ratio: var(--capa);
+    object-fit: cover;
+    border-radius: 1px 2px 2px 1px;
+}
+
+.admin-autor,
+.admin-estoque {
+    display: block;
+    color: var(--grafite);
+    font-size: var(--t-14);
+}
+
+.admin-estoque.zerado {
+    color: var(--erro);
+    font-weight: 600;
+}
+
+.admin-genero {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: var(--t-14);
+}
+
+.admin-genero::before {
+    content: "";
+    width: 6px;
+    height: 18px;
+    border-radius: 1px 2px 2px 1px;
+    background: var(--cor);
+}
+
+.admin-nao {
+    color: var(--grafite);
+    font-size: var(--t-14);
+}
+
+.admin-digital {
+    color: var(--digital);
+    font-weight: 600;
+}
+
+.admin-acoes {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.admin-acoes form {
+    display: inline;
+    margin-left: 16px;
+}
+
+.admin-acoes a.botao-texto {
+    color: var(--tinta);
+    font-weight: 600;
+}
+
+.tabela-admin .preco-antigo {
+    display: block;
+}
+
+.ficha-editar {
+    display: inline-block;
+    margin-top: 6px;
+    color: var(--grafite);
+    font-size: var(--t-14);
+    text-underline-offset: 3px;
+}
+
+.previa-preco {
+    grid-column: 1 / -1;
+    padding: 10px 12px;
+    border-radius: var(--raio);
+    background: var(--prateleira);
+    font-size: var(--t-14);
+    font-variant-numeric: tabular-nums;
+}
+
+.previa-preco s {
+    color: var(--grafite);
+}
+
+.previa-preco strong {
+    font-size: var(--t-16);
+}
+
+.dica-formatos {
+    grid-column: 1 / -1;
+}
+
+.capa-atual {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.capa-atual img {
+    width: 60px;
+    aspect-ratio: var(--capa);
+    object-fit: cover;
+    border-radius: 1px 2px 2px 1px;
+    box-shadow: 0 1px 2px rgba(29, 34, 56, 0.25);
+}
+
+.capa-atual .marcar {
+    font-weight: 500;
+}
+
+.botao-perigo:hover {
+    color: var(--erro);
+}
+
+.admin-novo {
+    max-width: 760px;
+}
+
+.admin-voltar {
+    display: inline-block;
+    margin-bottom: 12px;
+    color: var(--grafite);
+    font-size: var(--t-14);
+    text-underline-offset: 3px;
+}
+
+.admin-novo .erro-form {
+    margin-top: 24px;
+}
+
+.erro-form ul {
+    margin: 6px 0 0;
+    padding-left: 20px;
+}
+
+.form-livro {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px 20px;
+    margin-top: 28px;
+    padding: 32px;
+    border-radius: 8px;
+    background: var(--prateleira);
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    grid-column: span 2;
+}
+
+.campo-largo {
+    grid-column: 1 / -1;
+}
+
+.campo-curto {
+    grid-column: span 1;
+}
+
+.campo label,
+.form-livro legend {
+    font-size: var(--t-14);
+    font-weight: 600;
+}
+
+.obrigatorio {
+    color: var(--grafite);
+    font-weight: 400;
+}
+
+.form-livro input[type="text"],
+.form-livro select,
+.form-livro textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio);
+    background: var(--papel);
+    font: inherit;
+    color: inherit;
+}
+
+.form-livro textarea {
+    resize: vertical;
+    font-family: var(--serif);
+    line-height: 1.6;
+}
+
+.form-livro input:focus,
+.form-livro select:focus,
+.form-livro textarea:focus {
+    border-color: var(--tinta);
+}
+
+.form-livro [aria-invalid="true"] {
+    border-color: var(--erro);
+    box-shadow: 0 0 0 1px var(--erro);
+}
+
+.erro-campo {
+    color: var(--erro);
+    font-size: var(--t-14);
+    font-weight: 600;
+}
+
+.form-livro .dica {
+    color: var(--grafite);
+    font-size: var(--t-14);
+}
+
+.form-livro fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+}
+
+.form-livro legend {
+    margin-bottom: 10px;
+    padding: 0;
+}
+
+.formatos-admin {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    gap: 12px;
+}
+
+.formatos-admin legend,
+.formatos-admin > .erro-campo {
+    grid-column: 1 / -1;
+}
+
+.formato-admin {
+    padding: 16px;
+    border: 2px solid var(--linha);
+    border-radius: var(--raio);
+    background: var(--papel);
+}
+
+.formato-admin:has(input[type="checkbox"]:checked) {
+    border-color: var(--tinta);
+}
+
+.formato-admin-digital:has(input[type="checkbox"]:checked) {
+    border-color: var(--digital);
+}
+
+.formato-admin-digital input[type="checkbox"] {
+    accent-color: var(--digital);
+}
+
+/* os campos de preço só aparecem quando o formato está marcado */
+.formato-admin:has(input[type="checkbox"]:not(:checked)) .formato-campos {
+    display: none;
+}
+
+.formato-campos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.formato-campos .campo {
+    grid-column: auto;
+}
+
+.formato-campos .dica {
+    grid-column: 1 / -1;
+}
+
+.marcar {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.marcar input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--tinta);
+}
+
+.destaques-admin {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 32px;
+}
+
+.destaques-admin legend {
+    width: 100%;
+}
+
+.destaques-admin .marcar {
+    font-weight: 500;
+}
+
+.form-livro input[type="file"] {
+    font: inherit;
+    font-size: var(--t-14);
+    color: var(--grafite);
+}
+
+.form-livro input[type="file"]::file-selector-button {
+    margin-right: 14px;
+    padding: 10px 18px;
+    border: 2px solid var(--tinta);
+    border-radius: var(--raio);
+    background: var(--papel);
+    color: var(--tinta);
+    font: 600 var(--t-14) var(--sans);
+    cursor: pointer;
+}
+
+.form-livro input[type="file"]::file-selector-button:hover {
+    background: var(--prateleira);
+}
+
+.form-botoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+/* ---------- Rodapé ---------- */
+
+.rodape {
+    background: var(--roxo-noite);
+    color: var(--papel);
+}
+
+.rodape :focus-visible {
+    outline-color: var(--ambar);
+}
+
+.rodape-interno {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 40px;
+    max-width: var(--largura);
+    margin: 0 auto;
+    padding: 56px var(--margem) 32px;
+}
+
+.rodape-marca {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    max-width: 34ch;
+}
+
+.rodape-marca strong {
+    font: 700 var(--t-20) var(--serif);
+}
+
+.rodape-marca p {
+    color: var(--lavanda);
+}
+
+.rodape-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.rodape-links a {
+    text-decoration: none;
+}
+
+.rodape-links a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.rodape-endereco {
+    color: var(--lavanda);
+    font-style: normal;
+}
+
+.rodape-nota {
+    max-width: var(--largura);
+    margin: 0 auto;
+    padding: 0 var(--margem) 32px;
+    color: #B9AED3;
+    font-size: var(--t-14);
+}
+
+/* ---------- Telas menores ---------- */
+
+@media (max-width: 1080px) {
+    .carrinho-grade {
+        grid-template-columns: 1fr;
+    }
+
+    .resumo {
+        position: static;
+    }
+}
+
+@media (max-width: 960px) {
+    :root {
+        --margem: 20px;
+    }
+
+    .topo-interno {
+        flex-wrap: wrap;
+        gap: 12px 20px;
+    }
+
+    .busca {
+        order: 3;
+        flex-basis: 100%;
+        max-width: none;
+    }
+
+    .com-estante {
+        grid-template-columns: minmax(0, 1fr); /* não deixa o carrossel alargar a página */
+        gap: 32px;
+    }
+
+    /* a pilha vira uma fileira de lombadas que rola para o lado */
+    .estante {
+        position: static;
+        margin: 0 calc(var(--margem) * -1);
+        padding: 0 var(--margem);
+        overflow-x: auto;
+    }
+
+    .estante-titulo {
+        margin-bottom: 10px;
+        font-size: var(--t-16);
+    }
+
+    .pilha {
+        flex-direction: row;
+        width: max-content;
+        align-items: flex-end;
+        gap: 4px;
+        padding-top: 6px;
+    }
+
+    /* :nth-child(n) para vencer as larguras da pilha do desktop */
+    .pilha li:nth-child(n) .lombada {
+        width: auto;
+        margin-left: 0;
+        white-space: nowrap;
+    }
+
+    .lombada:hover,
+    .lombada.ativa {
+        transform: translateY(-4px);
+    }
+
+    .tabua {
+        margin-bottom: 4px;
+    }
+
+    .vitrine-slide {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        min-height: 0;
+        padding: 32px 24px 64px;
+    }
+
+    .vitrine-capa img,
+    .vitrine-capa .capa-desenhada {
+        width: 160px;
+    }
+
+    .vitrine-seta {
+        top: auto;
+        bottom: 14px;
+        width: 40px;
+        height: 40px;
+        margin-top: 0;
+    }
+
+    .vitrine-anterior { left: 16px; }
+    .vitrine-proxima  { right: 16px; }
+
+    .vitrine-titulo {
+        font-size: var(--t-39);
+    }
+
+    .ficha {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .ficha-capa {
+        max-width: 280px;
+    }
+
+    .rodape-interno {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .rodape-marca {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 640px) {
+    .marca-nome {
+        font-size: var(--t-20);
+    }
+
+    .conta-nome {
+        display: none;
+    }
+
+    .prateleira {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 20px;
+    }
+
+    .livro-capa::after {
+        left: -10px;
+        right: -10px;
+    }
+
+    .vitrine-titulo,
+    .ficha-titulo {
+        font-size: var(--t-31);
+    }
+
+    .compra .botao {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .item {
+        grid-template-columns: 60px minmax(0, 1fr) auto;
+        grid-template-areas:
+            "capa info info"
+            "capa quantidade preco"
+            "capa remover remover";
+        gap: 10px 16px;
+    }
+
+    .item-capa img {
+        width: 60px;
+    }
+
+    .item-remover {
+        justify-self: start;
+    }
+
+    .acesso-formularios {
+        grid-template-columns: 1fr;
+    }
+
+    .form-livro {
+        grid-template-columns: 1fr 1fr;
+        padding: 20px;
+    }
+
+    .campo {
+        grid-column: 1 / -1;
+    }
+
+    .formatos-admin,
+    .formato-campos {
+        grid-template-columns: 1fr;
+    }
+
+    .rodape-interno {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .lombada,
+    .capa img {
+        transition: none;
+    }
+
+    .livro-capa:hover img {
+        transform: none;
+    }
+}
