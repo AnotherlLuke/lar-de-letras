@@ -140,8 +140,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             avisar('Entre na sua conta para finalizar a compra. Seus livros continuam no carrinho.');
             redirecionar('login.php');
         }
-        // Protótipo: não grava pedido nem cobra nada, só confirma e esvazia o carrinho.
-        $total = montar_carrinho($conexao)[4];
+        // Protótipo: não grava pedido nem cobra nada, mas dá baixa no estoque dos livros físicos.
+        [$itens, , , , $total] = montar_carrinho($conexao);
+        if (!$itens) {
+            redirecionar('carrinho.php');
+        }
+
+        // Só desconta se ainda houver exemplares suficientes (evita estoque negativo
+        // quando duas pessoas compram o último exemplar ao mesmo tempo).
+        $baixar = $conexao->prepare(
+            "UPDATE livros SET estoque = estoque - :quantidade WHERE id = :id AND estoque >= :minimo"
+        );
+        $conexao->beginTransaction();
+        try {
+            foreach ($itens as $item) {
+                if ($item['digital']) {
+                    continue; // e-book não tem estoque
+                }
+                $baixar->execute([
+                    'quantidade' => $item['quantidade'],
+                    'minimo'     => $item['quantidade'],
+                    'id'         => $item['livro']['id'],
+                ]);
+                if ($baixar->rowCount() === 0) {
+                    $conexao->rollBack();
+                    $livro = buscar_livro($conexao, (int) $item['livro']['id']);
+                    $resta = $livro ? (int) $livro['estoque'] : 0;
+                    if ($resta > 0) {
+                        $_SESSION['carrinho'][$item['chave']] = $resta;
+                        avisar('Restam só ' . $resta . ' exemplares de “' . $item['livro']['titulo'] . '”. Ajustamos seu carrinho, confira antes de finalizar.', 'erro');
+                    } else {
+                        unset($_SESSION['carrinho'][$item['chave']]);
+                        avisar('O livro físico de “' . $item['livro']['titulo'] . '” esgotou e saiu do seu carrinho.', 'erro');
+                    }
+                    redirecionar('carrinho.php');
+                }
+            }
+            $conexao->commit();
+        } catch (PDOException $erro) {
+            $conexao->rollBack();
+            error_log($erro->getMessage());
+            avisar('Não foi possível finalizar a compra. Tente de novo.', 'erro');
+            redirecionar('carrinho.php');
+        }
+
         $_SESSION['pedido_recebido'] = [
             'nome'  => strtok($usuario['nome'], ' '),
             'total' => $total,

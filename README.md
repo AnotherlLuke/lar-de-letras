@@ -47,24 +47,27 @@ As capas enviadas ficam em `imagens/enviadas/`, e essa pasta precisa existir e a
 
 1. Copie a pasta `LarLetras` para `C:\xampp\htdocs\`.
 2. Abra o **XAMPP Control Panel** e clique em **Start** no **Apache** e no **MySQL**.
-3. Acesse <http://localhost/phpmyadmin>, abra a aba **Importar**, escolha o arquivo
-   `LarLetras\banco\livraria.sql` e clique em **Importar**.
-   Isso apaga e recria o banco `livraria` com 7 gêneros e 23 livros.
+3. Acesse <http://localhost/LarLetras/>.
+   Na primeira visita, se o banco `livraria` não existir, o site cria sozinho com os dados de
+   `banco/livraria.sql` (7 gêneros, 23 livros e o usuário admin). Não precisa importar nada.
+   Para voltar aos dados padrão, apague o banco `livraria` no phpMyAdmin e recarregue o site
+   (ou importe `banco/livraria.sql` na aba **Importar**, que apaga e recria o banco).
    Já tinha importado uma versão antiga? Importe também `banco/atualizar-generos.sql` (para criar gêneros)
    e `banco/atualizar-banner.sql` (para editar o banner). Eles não apagam livros nem usuários.
-4. Acesse <http://localhost/LarLetras/>.
 
 ## Como rodar no Linux
 
 - **Com XAMPP (LAMPP):** copie a pasta para `/opt/lampp/htdocs/`, inicie com `sudo /opt/lampp/lampp start`
-  e siga os passos 3 e 4 acima.
-- **Sem XAMPP:** com `php` e MariaDB instalados, rode `mysql -u root < banco/livraria.sql`,
-  depois `php -S localhost:8000` dentro da pasta e acesse <http://localhost:8000>.
+  e siga o passo 3 acima.
+- **Sem XAMPP:** com `php` e MariaDB instalados, rode `php -S localhost:8000` dentro da pasta e acesse
+  <http://localhost:8000>. O banco é criado na primeira visita (ou antes, com `php includes/criar-banco.php`).
 
 ## Configuração
 
 Os dados de acesso ao banco ficam em `includes/conexao.php`: usuário `root`, sem senha, que é o padrão do XAMPP.
-Se o seu MySQL tiver senha, altere `$senha` nesse arquivo.
+Se o seu MySQL tiver senha, altere `$senha` nesse arquivo, ou crie `includes/conexao.local.php`
+(fica fora do git, pelo `.gitignore`) para trocar usuário e senha só na sua máquina.
+O usuário precisa ter permissão para criar o banco na primeira execução.
 
 ## Estrutura
 

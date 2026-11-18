@@ -87,7 +87,7 @@ INSERT INTO livros
  2, 'Português', 1984, 320, 'neuromancer.jpg', 54.90, 0, 32.90, 0, 0),
 ('A Guerra dos Mundos', 'H. G. Wells',
  'Cilindros caem perto de Londres e, de dentro deles, sai uma invasão que a humanidade não tem como deter.',
- 2, 'Português', 1898, 224, 'guerra-dos-mundos.jpg', 39.90, 10, 14.90, 0, 0),
+ 2, 'Português', 1898, 224, 'guerra-dos-mundos.jpg', 39.90, 10, NULL, 0, 0),
 ('A Máquina do Tempo', 'H. G. Wells',
  'Um inventor viaja ao ano 802.701 e encontra a humanidade dividida entre os elóis da superfície e os morlocks do subsolo.',
  2, 'Português', 1895, 144, 'maquina-do-tempo.jpg', 29.90, 15, NULL, 0, 0),
@@ -160,3 +160,4 @@ UPDATE livros SET desconto_digital = 30 WHERE titulo = 'Neuromancer';
 -- Livros no banner principal (carrossel da página inicial)
 UPDATE livros SET banner = 1 WHERE titulo IN
 ('Tress, a Garota do Mar Esmeralda', 'O Iluminado', 'O Cavaleiro dos Sete Reinos', 'Neuromancer', 'Dom Casmurro');
+UPDATE livros SET banner_cor = '#B92222' WHERE titulo = 'O Cavaleiro dos Sete Reinos';
