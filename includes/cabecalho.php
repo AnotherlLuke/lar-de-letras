@@ -26,8 +26,8 @@ $aviso        = pegar_aviso();
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600;7..72,700&display=swap">
-    <link rel="stylesheet" href="css/estilo.css?v=9">
-    <script src="js/script.js?v=8" defer></script>
+    <link rel="stylesheet" href="css/estilo.css?v=13">
+    <script src="js/script.js?v=9" defer></script>
 </head>
 <body>
 <a class="pular" href="#conteudo">Pular para o conteúdo</a>
@@ -82,11 +82,11 @@ $aviso        = pegar_aviso();
             <h2 class="estante-titulo">Gêneros</h2>
             <ol class="pilha">
                 <?php foreach ($generos as $genero): ?>
+                    <?php if ((int) $genero['total'] === 0) continue; // gênero ainda sem livros não aparece na loja ?>
                     <li>
                         <a class="lombada<?= $genero['slug'] === $genero_ativo ? ' ativa' : '' ?>"
                            href="<?= e($link_estante . $genero['slug']) ?>"
-                           data-genero="<?= e($genero['slug']) ?>"
-                           style="<?= cores_genero($genero) ?>">
+                           data-genero="<?= e($genero['slug']) ?>">
                             <span class="lombada-nome"><?= e($genero['nome']) ?></span>
                             <span class="lombada-total" aria-label="<?= (int) $genero['total'] ?> livros"><?= (int) $genero['total'] ?></span>
                         </a>

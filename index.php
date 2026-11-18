@@ -16,9 +16,8 @@ if ($busca !== '') {
     $lancamentos = array_values(array_filter($livros, fn($l) => $l['lancamento']));
     usort($lancamentos, fn($a, $b) => (int) $b['ano'] <=> (int) $a['ano']);
 
-    // Banner principal: livros marcados pelo admin (lançamentos primeiro)
-    $destaques = array_values(array_filter($livros, fn($l) => $l['banner']));
-    usort($destaques, fn($a, $b) => [$b['lancamento'], (int) $b['ano']] <=> [$a['lancamento'], (int) $a['ano']]);
+    // Banner principal: livros escolhidos pelo admin, na ordem definida em Gerenciar livros → Banner
+    $destaques = ordenar_banner(array_filter($livros, fn($l) => $l['banner']));
 
     $mais_vendidos = array_filter($livros, fn($l) => $l['mais_vendido']);
 
@@ -27,24 +26,6 @@ if ($busca !== '') {
     foreach ($livros as $livro) {
         $por_genero[$livro['genero_slug']][] = $livro;
     }
-}
-
-/** Por que o livro está no banner. */
-function motivo_destaque(array $livro): string
-{
-    if ($livro['preco_fisico'] !== null && $livro['desconto_fisico'] > 0) {
-        return 'Promoção: ' . (int) $livro['desconto_fisico'] . '% de desconto no livro físico';
-    }
-    if ($livro['preco_digital'] !== null && $livro['desconto_digital'] > 0) {
-        return 'Promoção: ' . (int) $livro['desconto_digital'] . '% de desconto no e-book';
-    }
-    if ($livro['lancamento']) {
-        return 'Acabou de chegar em ' . $livro['genero_nome'];
-    }
-    if ($livro['mais_vendido']) {
-        return 'Um dos mais vendidos em ' . $livro['genero_nome'];
-    }
-    return 'Destaque em ' . $livro['genero_nome'];
 }
 
 $titulo       = $busca !== '' ? 'Busca: ' . $busca : null;
@@ -75,17 +56,17 @@ require __DIR__ . '/includes/cabecalho.php';
         <section class="vitrine" aria-roledescription="carrossel" aria-label="Destaques" data-carrossel>
             <div class="vitrine-trilho">
                 <?php foreach ($destaques as $i => $destaque): $link = 'livro.php?id=' . (int) $destaque['id']; ?>
-                    <article class="vitrine-slide" style="<?= cores_genero($destaque) ?>"
+                    <article class="vitrine-slide" style="<?= cores_banner($destaque) ?>"
                              role="group" aria-roledescription="slide" aria-label="<?= $i + 1 ?> de <?= $total_destaques ?>">
                         <a class="vitrine-capa" href="<?= $link ?>" tabindex="-1" aria-hidden="true">
                             <?= capa($destaque) ?>
                         </a>
                         <div class="vitrine-texto">
-                            <p class="vitrine-contexto"><?= e(motivo_destaque($destaque)) ?></p>
+                            <p class="vitrine-contexto"><?= e(chamada_banner($destaque)) ?></p>
                             <h2 class="vitrine-titulo"><?= e($destaque['titulo']) ?></h2>
                             <p class="vitrine-autor"><?= e($destaque['autor']) ?></p>
-                            <?php if (!empty($destaque['descricao'])): ?>
-                                <p class="vitrine-descricao"><?= e($destaque['descricao']) ?></p>
+                            <?php if (descricao_banner($destaque) !== ''): ?>
+                                <p class="vitrine-descricao"><?= e(descricao_banner($destaque)) ?></p>
                             <?php endif; ?>
                             <div class="vitrine-acao">
                                 <a class="botao botao-claro" href="<?= $link ?>">Ver livro</a>

@@ -8,7 +8,45 @@ document.addEventListener('DOMContentLoaded', () => {
     confirmarAntesDeEnviar();
     previaDoPrecoComDesconto();
     carrosselDoBanner();
+    previaDoSlide();
 });
+
+// Admin → Banner: a faixa colorida do slide mostra a cor e a chamada enquanto o admin edita.
+function previaDoSlide() {
+    document.querySelectorAll('.slide-admin').forEach((slide) => {
+        const cor = slide.querySelector('[data-previa-cor]');
+        const usarGenero = slide.querySelector('[data-usar-cor-genero]');
+        const chamada = slide.querySelector('[data-previa-texto]');
+        const previaChamada = slide.querySelector('[data-previa-chamada]');
+
+        const pintar = () => {
+            slide.style.setProperty('--cor', cor.value);
+            slide.style.setProperty('--cor-texto', corDoTexto(cor.value));
+        };
+
+        cor.addEventListener('input', () => {
+            usarGenero.checked = cor.value.toUpperCase() === cor.dataset.corGenero.toUpperCase();
+            pintar();
+        });
+        usarGenero.addEventListener('change', () => {
+            if (usarGenero.checked) cor.value = cor.dataset.corGenero.toLowerCase();
+            pintar();
+        });
+        chamada.addEventListener('input', () => {
+            previaChamada.textContent = chamada.value.trim() || previaChamada.dataset.previaChamada;
+        });
+    });
+}
+
+// Mesma regra do PHP (cor_texto_para): branco ou escuro, o que tiver mais contraste.
+function corDoTexto(hex) {
+    const luz = [1, 3, 5].reduce((soma, inicio, i) => {
+        const c = parseInt(hex.slice(inicio, inicio + 2), 16) / 255;
+        const linear = c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+        return soma + [0.2126, 0.7152, 0.0722][i] * linear;
+    }, 0);
+    return 1.05 / (luz + 0.05) >= (luz + 0.05) / 0.0662 ? '#FFFFFF' : '#1D2238';
+}
 
 // Página inicial: banner com flechas e bolinhas. Sem JavaScript, os slides rolam para o lado.
 function carrosselDoBanner() {

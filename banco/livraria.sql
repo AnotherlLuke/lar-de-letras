@@ -10,10 +10,10 @@ USE livraria;
 CREATE TABLE generos (
     id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nome       VARCHAR(60)  NOT NULL,
-    slug       VARCHAR(60)  NOT NULL UNIQUE,
-    cor        CHAR(7)      NOT NULL,
+    slug       VARCHAR(60)  NOT NULL UNIQUE,  -- usado no endereço: index.php#ficcao-cientifica
+    cor        CHAR(7)      NOT NULL DEFAULT '#6A3DB8',  -- banner, capas desenhadas e marcadores
     cor_texto  CHAR(7)      NOT NULL DEFAULT '#FFFFFF',
-    ordem      TINYINT UNSIGNED NOT NULL DEFAULT 0
+    ordem      TINYINT UNSIGNED NOT NULL DEFAULT 0  -- posição na estante
 ) ENGINE=InnoDB;
 
 CREATE TABLE livros (
@@ -34,6 +34,10 @@ CREATE TABLE livros (
     lancamento     TINYINT(1)   NOT NULL DEFAULT 0,
     mais_vendido   TINYINT(1)   NOT NULL DEFAULT 0,
     banner         TINYINT(1)   NOT NULL DEFAULT 0,   -- aparece no carrossel da página inicial
+    banner_ordem     TINYINT UNSIGNED NOT NULL DEFAULT 0,  -- posição no carrossel
+    banner_cor       CHAR(7)      NULL,     -- fundo do slide; NULL = cor do gênero
+    banner_chamada   VARCHAR(120) NULL,     -- frase acima do título; NULL = texto automático
+    banner_descricao TEXT         NULL,     -- texto do slide; NULL = descrição do livro
     CONSTRAINT chk_preco_fisico  CHECK (preco_fisico IS NULL OR preco_fisico > 0),
     CONSTRAINT chk_preco_digital CHECK (preco_digital IS NULL OR preco_digital > 0),
     CONSTRAINT chk_algum_formato CHECK (preco_fisico IS NOT NULL OR preco_digital IS NOT NULL),
