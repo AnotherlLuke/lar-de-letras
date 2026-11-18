@@ -214,11 +214,6 @@ p {
     letter-spacing: -0.01em;
 }
 
-.marca-sub {
-    color: var(--lavanda);
-    font-size: var(--t-14);
-}
-
 .busca {
     display: flex;
     flex: 1;

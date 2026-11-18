@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="60 50 1080 1080">
+  <!-- Ícone da Lar de Letras: livro aberto com a capa no roxo da marca -->
+
+  <!-- capa e a ponta redonda da lombada -->
+  <rect x="75" y="250" width="1050" height="725" fill="#6A3DB8"/>
+  <circle cx="600" cy="900" r="125" fill="#6A3DB8"/>
+  <circle cx="600" cy="900" r="75" fill="#2B1B4D"/>
+
+  <!-- meio do livro, entre as páginas -->
+  <rect x="575" y="250" width="50" height="650" fill="#BDADA6"/>
+
+  <!-- página da esquerda; a da direita é o espelho dela -->
+  <g id="pagina">
+    <path d="M150 300 200 175V825L150 900Z" fill="#D8CCC8"/>
+    <path d="M150 900 200 825C450 830 575 860 575 900Z" fill="#BDADA6"/>
+    <path d="M200 175C450 178 575 210 575 250V900C575 860 450 830 200 825Z" fill="#EEEAE7"/>
+  </g>
+  <use href="#pagina" transform="matrix(-1 0 0 1 1200 0)"/>
+</svg>
