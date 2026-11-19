@@ -9,46 +9,31 @@ function buscar_livro(PDO $conexao, int $id): ?array
     return $consulta->fetch() ?: null;
 }
 
-/** Lê o carrinho da sessão e calcula itens, subtotal, frete e total. */
+/** Lê o carrinho da sessão e calcula os itens e o total. */
 function montar_carrinho(PDO $conexao): array
 {
-    $itens      = [];
-    $subtotal   = 0.0;
-    $tem_fisico = false;
-    $carrinho   = carrinho();
+    $itens = [];
+    $total = 0.0;
+    $ids   = array_keys(carrinho());
+    $_SESSION['carrinho'] = [];
 
-    if ($carrinho) {
-        $ids = array_values(array_unique(array_map(fn($chave) => (int) $chave, array_keys($carrinho))));
+    if ($ids) {
         $marcadores = implode(',', array_fill(0, count($ids), '?'));
-        $consulta = $conexao->prepare("SELECT * FROM livros WHERE id IN ($marcadores)");
+        $consulta = $conexao->prepare("SELECT * FROM livros WHERE id IN ($marcadores) ORDER BY titulo");
         $consulta->execute($ids);
-        $livros = [];
-        foreach ($consulta->fetchAll() as $linha) {
-            $livros[(int) $linha['id']] = $linha;
-        }
+        $livros = $consulta->fetchAll();
 
-        foreach ($carrinho as $chave => $quantidade) {
-            [$id, $formato] = explode('-', $chave);
-            $livro = $livros[(int) $id] ?? null;
-            if (!$livro) {
-                unset($_SESSION['carrinho'][$chave]); // livro saiu do catálogo
-                continue;
-            }
-            $digital    = $formato === 'digital';
-            $unitario   = $digital
-                ? preco_final($livro['preco_digital'], $livro['desconto_digital'])
-                : preco_final($livro['preco_fisico'], $livro['desconto_fisico']);
-            $desconto   = (int) ($digital ? $livro['desconto_digital'] : $livro['desconto_fisico']);
-            $item_total = $unitario * $quantidade;
-            $subtotal  += $item_total;
-            $tem_fisico = $tem_fisico || !$digital;
+        // livro que saiu do catálogo sai também do carrinho
+        $_SESSION['carrinho'] = array_fill_keys(array_map(fn($l) => (int) $l['id'], $livros), true);
 
-            $itens[] = compact('chave', 'livro', 'digital', 'quantidade', 'unitario', 'item_total', 'desconto');
+        foreach ($livros as $livro) {
+            $preco  = preco_final($livro['preco'], $livro['desconto']);
+            $total += $preco;
+            $itens[] = ['livro' => $livro, 'preco' => $preco, 'desconto' => (int) $livro['desconto']];
         }
     }
 
-    $frete = $tem_fisico ? FRETE_FIXO : 0.0;
-    return [$itens, $subtotal, $tem_fisico, $frete, $subtotal + $frete];
+    return [$itens, $total];
 }
 
 /* ---------- Ações (sempre via POST, depois redireciona) ---------- */
@@ -58,74 +43,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['carrinho'] = carrinho();
 
     if ($acao === 'adicionar') {
-        $livro   = buscar_livro($conexao, (int) ($_POST['id'] ?? 0));
-        $formato = ($_POST['formato'] ?? '') === 'digital' ? 'digital' : 'fisico';
-
+        $livro = buscar_livro($conexao, (int) ($_POST['id'] ?? 0));
         if (!$livro) {
             avisar('Esse livro não existe mais no catálogo.', 'erro');
             redirecionar('index.php');
         }
 
-        $chave  = chave_carrinho((int) $livro['id'], $formato);
-        $voltar = 'livro.php?id=' . (int) $livro['id'];
-
-        if ($formato === 'digital') {
-            if ($livro['preco_digital'] === null) {
-                avisar('“' . $livro['titulo'] . '” não tem versão digital.', 'erro');
-                redirecionar($voltar);
-            }
-            if (isset($_SESSION['carrinho'][$chave])) {
-                avisar('O e-book de “' . $livro['titulo'] . '” já está no seu carrinho.');
-            } else {
-                $_SESSION['carrinho'][$chave] = 1;
-                avisar('E-book de “' . $livro['titulo'] . '” adicionado ao carrinho.');
-            }
+        $id = (int) $livro['id'];
+        if (isset($_SESSION['carrinho'][$id])) {
+            avisar('“' . $livro['titulo'] . '” já está no seu carrinho.');
         } else {
-            $estoque = (int) $livro['estoque'];
-            if ($livro['preco_fisico'] === null) {
-                avisar('“' . $livro['titulo'] . '” é vendido só como e-book.', 'erro');
-                redirecionar($voltar);
-            }
-            if ($estoque === 0) {
-                avisar('O livro físico de “' . $livro['titulo'] . '” está esgotado.', 'erro');
-                redirecionar($voltar);
-            }
-            $atual   = $_SESSION['carrinho'][$chave] ?? 0;
-            $pedida  = max(1, (int) ($_POST['quantidade'] ?? 1));
-            $nova    = min($atual + $pedida, $estoque);
-            $_SESSION['carrinho'][$chave] = $nova;
-
-            if ($atual + $pedida > $estoque) {
-                avisar('Temos só ' . $estoque . ' exemplares de “' . $livro['titulo'] . '”. Seu carrinho ficou com ' . $nova . '.', 'erro');
-            } else {
-                avisar('“' . $livro['titulo'] . '” adicionado ao carrinho.');
-            }
-        }
-        redirecionar('carrinho.php');
-    }
-
-    if ($acao === 'atualizar') {
-        $chave = $_POST['chave'] ?? '';
-        if (preg_match('/^(\d+)-fisico$/', $chave, $partes) && isset($_SESSION['carrinho'][$chave])) {
-            $livro      = buscar_livro($conexao, (int) $partes[1]);
-            $quantidade = (int) ($_POST['quantidade'] ?? 1);
-
-            if (!$livro || $quantidade <= 0) {
-                unset($_SESSION['carrinho'][$chave]);
-                avisar('Item removido do carrinho.');
-            } elseif ($quantidade > (int) $livro['estoque']) {
-                $_SESSION['carrinho'][$chave] = (int) $livro['estoque'];
-                avisar('Temos só ' . (int) $livro['estoque'] . ' exemplares de “' . $livro['titulo'] . '”.', 'erro');
-            } else {
-                $_SESSION['carrinho'][$chave] = $quantidade;
-                avisar('Quantidade atualizada.');
-            }
+            $_SESSION['carrinho'][$id] = true;
+            avisar('“' . $livro['titulo'] . '” adicionado ao carrinho.');
         }
         redirecionar('carrinho.php');
     }
 
     if ($acao === 'remover') {
-        unset($_SESSION['carrinho'][$_POST['chave'] ?? '']);
+        unset($_SESSION['carrinho'][(int) ($_POST['id'] ?? 0)]);
         avisar('Item removido do carrinho.');
         redirecionar('carrinho.php');
     }
@@ -134,47 +69,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$_SESSION['carrinho']) {
             redirecionar('carrinho.php');
         }
+        $pagamento = $_POST['pagamento'] ?? '';
+        if (!isset(FORMAS_PAGAMENTO[$pagamento])) {
+            avisar('Escolha a forma de pagamento: Pix ou cartão de crédito.', 'erro');
+            redirecionar('carrinho.php');
+        }
+        $_SESSION['pagamento'] = $pagamento; // continua marcada se precisar entrar na conta antes
+
         $usuario = usuario_logado();
         if (!$usuario) {
             $_SESSION['voltar'] = 'carrinho.php';
             avisar('Entre na sua conta para finalizar a compra. Seus livros continuam no carrinho.');
             redirecionar('login.php');
         }
-        // Protótipo: não grava pedido nem cobra nada, mas dá baixa no estoque dos livros físicos.
-        [$itens, , , , $total] = montar_carrinho($conexao);
+        // A conta do administrador gerencia a loja, não compra (e não tem Meus pedidos).
+        if (eh_admin()) {
+            avisar('A conta de administrador não faz compras. Entre com uma conta de cliente para finalizar.', 'erro');
+            redirecionar('carrinho.php');
+        }
+
+        // Protótipo: grava o pedido, mas não cobra nada e não envia email de verdade.
+        [$itens, $total] = montar_carrinho($conexao);
         if (!$itens) {
             redirecionar('carrinho.php');
         }
 
-        // Só desconta se ainda houver exemplares suficientes (evita estoque negativo
-        // quando duas pessoas compram o último exemplar ao mesmo tempo).
-        $baixar = $conexao->prepare(
-            "UPDATE livros SET estoque = estoque - :quantidade WHERE id = :id AND estoque >= :minimo"
-        );
         $conexao->beginTransaction();
         try {
+            $conexao->prepare(
+                "INSERT INTO pedidos (usuario_id, email, pagamento, total) VALUES (:usuario, :email, :pagamento, :total)"
+            )->execute([
+                'usuario'   => $usuario['id'],
+                'email'     => $usuario['email'],
+                'pagamento' => $pagamento,
+                'total'     => $total,
+            ]);
+            $pedido_id = (int) $conexao->lastInsertId();
+
+            $gravar_item = $conexao->prepare(
+                "INSERT INTO pedido_itens (pedido_id, livro_id, titulo, autor, preco)
+                 VALUES (:pedido, :livro, :titulo, :autor, :preco)"
+            );
             foreach ($itens as $item) {
-                if ($item['digital']) {
-                    continue; // e-book não tem estoque
-                }
-                $baixar->execute([
-                    'quantidade' => $item['quantidade'],
-                    'minimo'     => $item['quantidade'],
-                    'id'         => $item['livro']['id'],
+                $gravar_item->execute([
+                    'pedido' => $pedido_id,
+                    'livro'  => $item['livro']['id'],
+                    'titulo' => $item['livro']['titulo'],
+                    'autor'  => $item['livro']['autor'],
+                    'preco'  => $item['preco'],
                 ]);
-                if ($baixar->rowCount() === 0) {
-                    $conexao->rollBack();
-                    $livro = buscar_livro($conexao, (int) $item['livro']['id']);
-                    $resta = $livro ? (int) $livro['estoque'] : 0;
-                    if ($resta > 0) {
-                        $_SESSION['carrinho'][$item['chave']] = $resta;
-                        avisar('Restam só ' . $resta . ' exemplares de “' . $item['livro']['titulo'] . '”. Ajustamos seu carrinho, confira antes de finalizar.', 'erro');
-                    } else {
-                        unset($_SESSION['carrinho'][$item['chave']]);
-                        avisar('O livro físico de “' . $item['livro']['titulo'] . '” esgotou e saiu do seu carrinho.', 'erro');
-                    }
-                    redirecionar('carrinho.php');
-                }
             }
             $conexao->commit();
         } catch (PDOException $erro) {
@@ -185,9 +128,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $_SESSION['pedido_recebido'] = [
-            'nome'  => strtok($usuario['nome'], ' '),
-            'total' => $total,
+            'numero' => $pedido_id,
+            'nome'   => strtok($usuario['nome'], ' '),
+            'email'  => $usuario['email'],
+            'total'  => $total,
+            'titulos' => array_map(fn($item) => $item['livro']['titulo'], $itens),
+            'pagamento' => FORMAS_PAGAMENTO[$pagamento],
         ];
+        unset($_SESSION['pagamento']);
         unset($_SESSION['carrinho']);
         redirecionar('carrinho.php');
     }
@@ -195,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirecionar('carrinho.php');
 }
 
-[$itens, $subtotal, $tem_fisico, $frete, $total] = montar_carrinho($conexao);
+[$itens, $total] = montar_carrinho($conexao);
 
 $pedido = $_SESSION['pedido_recebido'] ?? null;
 unset($_SESSION['pedido_recebido']);
@@ -212,9 +160,20 @@ require __DIR__ . '/includes/cabecalho.php';
     <?php if ($pedido): ?>
 
         <div class="confirmacao">
-            <h2>Pedido recebido, <?= e($pedido['nome']) ?>.</h2>
-            <p>Total de <?= preco($pedido['total']) ?>. Como este site é um protótipo, nenhum pagamento foi cobrado e nada será enviado.</p>
-            <a class="botao" href="index.php">Voltar ao catálogo</a>
+            <h2>Pedido Realizado!</h2>
+            <p class="confirmacao-destaque">Seus Ebooks serão enviados no seu email.</p>
+            <dl class="confirmacao-detalhes">
+                <div><dt>Pedido</dt><dd>nº <?= (int) $pedido['numero'] ?> · <?= status_html('confirmando') ?></dd></div>
+                <div><dt>Email</dt><dd><?= e($pedido['email']) ?></dd></div>
+                <div><dt><?= count($pedido['titulos']) === 1 ? 'Ebook' : 'Ebooks' ?></dt><dd><?= e(implode(', ', $pedido['titulos'])) ?></dd></div>
+                <div><dt>Pagamento</dt><dd><?= e($pedido['pagamento']) ?></dd></div>
+                <div><dt>Total</dt><dd><?= preco($pedido['total']) ?></dd></div>
+            </dl>
+            <p class="confirmacao-nota">Como este site é um protótipo, nenhum pagamento foi cobrado e nenhum email foi enviado de verdade.</p>
+            <div class="confirmacao-botoes">
+                <a class="botao" href="pedidos.php">Ver meus pedidos</a>
+                <a class="botao botao-contorno" href="index.php">Voltar ao catálogo</a>
+            </div>
         </div>
 
     <?php elseif (!$itens): ?>
@@ -234,39 +193,16 @@ require __DIR__ . '/includes/cabecalho.php';
                         <div class="item-info">
                             <h2 class="item-titulo"><a href="livro.php?id=<?= (int) $livro['id'] ?>"><?= e($livro['titulo']) ?></a></h2>
                             <p class="item-autor"><?= e($livro['autor']) ?></p>
-                            <p class="item-formato<?= $item['digital'] ? ' digital' : '' ?>">
-                                <?= $item['digital'] ? 'E-book, sem frete' : 'Livro físico' ?>
-                                <?php if ($item['desconto'] > 0): ?>
-                                    <span class="selo-desconto"><?= $item['desconto'] ?>% de desconto</span>
-                                <?php endif; ?>
-                            </p>
-                        </div>
-
-                        <div class="item-quantidade">
-                            <?php if ($item['digital']): ?>
-                                <span class="item-unico">1 cópia</span>
-                            <?php else: ?>
-                                <form action="carrinho.php" method="post" class="form-quantidade">
-                                    <input type="hidden" name="acao" value="atualizar">
-                                    <input type="hidden" name="chave" value="<?= e($item['chave']) ?>">
-                                    <label for="qtd-<?= e($item['chave']) ?>">Quantidade</label>
-                                    <input type="number" id="qtd-<?= e($item['chave']) ?>" name="quantidade"
-                                           value="<?= (int) $item['quantidade'] ?>" min="0" max="<?= (int) $livro['estoque'] ?>">
-                                    <button type="submit" class="botao-texto atualizar">Atualizar</button>
-                                </form>
+                            <?php if ($item['desconto'] > 0): ?>
+                                <p class="item-promo"><span class="selo-desconto"><?= $item['desconto'] ?>% de desconto</span></p>
                             <?php endif; ?>
                         </div>
 
-                        <p class="item-preco">
-                            <?= preco($item['item_total']) ?>
-                            <?php if ($item['quantidade'] > 1): ?>
-                                <span><?= preco($item['unitario']) ?> cada</span>
-                            <?php endif; ?>
-                        </p>
+                        <p class="item-preco"><?= preco($item['preco']) ?></p>
 
                         <form action="carrinho.php" method="post" class="item-remover">
                             <input type="hidden" name="acao" value="remover">
-                            <input type="hidden" name="chave" value="<?= e($item['chave']) ?>">
+                            <input type="hidden" name="id" value="<?= (int) $livro['id'] ?>">
                             <button type="submit" class="botao-texto">Remover</button>
                         </form>
                     </li>
@@ -276,15 +212,28 @@ require __DIR__ . '/includes/cabecalho.php';
             <aside class="resumo" aria-labelledby="titulo-resumo">
                 <h2 id="titulo-resumo">Resumo</h2>
                 <dl>
-                    <div><dt>Subtotal</dt><dd><?= preco($subtotal) ?></dd></div>
-                    <div><dt>Frete</dt><dd><?= $tem_fisico ? preco($frete) : 'Sem frete' ?></dd></div>
+                    <div><dt><?= count($itens) ?> <?= count($itens) === 1 ? 'ebook' : 'ebooks' ?></dt><dd><?= preco($total) ?></dd></div>
                     <div class="resumo-total"><dt>Total</dt><dd><?= preco($total) ?></dd></div>
                 </dl>
-                <?php if ($tem_fisico): ?>
-                    <p class="resumo-nota">Frete fixo para todo o Brasil. E-books não pagam frete.</p>
-                <?php endif; ?>
+                <p class="resumo-nota">
+                    <?php if (usuario_logado() && !eh_admin()): ?>
+                        Os ebooks são enviados para <strong><?= e(usuario_logado()['email']) ?></strong> assim que o pagamento é confirmado.
+                    <?php else: ?>
+                        Os ebooks são enviados para o email da sua conta assim que o pagamento é confirmado.
+                    <?php endif; ?>
+                </p>
                 <form action="carrinho.php" method="post">
                     <input type="hidden" name="acao" value="finalizar">
+                    <fieldset class="pagamento">
+                        <legend>Forma de pagamento</legend>
+                        <?php foreach (FORMAS_PAGAMENTO as $valor => $nome): ?>
+                            <label class="pagamento-opcao">
+                                <input type="radio" name="pagamento" value="<?= e($valor) ?>" required
+                                    <?= ($_SESSION['pagamento'] ?? '') === $valor ? 'checked' : '' ?>>
+                                <?= e($nome) ?>
+                            </label>
+                        <?php endforeach; ?>
+                    </fieldset>
                     <button type="submit" class="botao botao-largo">Finalizar compra</button>
                 </form>
                 <?php if (!usuario_logado()): ?>

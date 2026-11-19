@@ -9,11 +9,7 @@ $consulta->execute(['id' => $id]);
 $livro = $consulta->fetch();
 
 if ($livro) {
-    $estoque     = (int) $livro['estoque'];
-    $vende_fisico = $livro['preco_fisico'] !== null;
-    $tem_fisico  = $vende_fisico && $estoque > 0;
-    $tem_digital = $livro['preco_digital'] !== null;
-    $formato_padrao = $tem_fisico ? 'fisico' : 'digital';
+    $no_carrinho = isset(carrinho()[(int) $livro['id']]);
 
     // Outros livros do mesmo gênero
     $consulta = $conexao->prepare(SQL_LIVROS . " WHERE l.genero_id = :genero AND l.id <> :id ORDER BY l.mais_vendido DESC, l.titulo LIMIT 4");
@@ -69,53 +65,19 @@ require __DIR__ . '/includes/cabecalho.php';
                 <?php endif; ?>
             </dl>
 
-            <?php if (!$tem_fisico && !$tem_digital): ?>
-                <p class="vazio">Este livro está esgotado no momento.</p>
-            <?php else: ?>
-                <form class="compra" action="carrinho.php" method="post">
-                    <input type="hidden" name="acao" value="adicionar">
-                    <input type="hidden" name="id" value="<?= (int) $livro['id'] ?>">
+            <form class="compra" action="carrinho.php" method="post">
+                <input type="hidden" name="acao" value="adicionar">
+                <input type="hidden" name="id" value="<?= (int) $livro['id'] ?>">
 
-                    <fieldset class="formatos">
-                        <legend>Escolha o formato</legend>
+                <p class="compra-preco"><?= preco_html($livro['preco'], $livro['desconto']) ?></p>
+                <p class="compra-nota">Ebook enviado para o seu email após o pagamento.</p>
 
-                        <?php if ($vende_fisico): ?>
-                        <label class="formato<?= $tem_fisico ? '' : ' indisponivel' ?>">
-                            <input type="radio" name="formato" value="fisico"
-                                <?= $tem_fisico ? '' : 'disabled' ?>
-                                <?= $formato_padrao === 'fisico' ? 'checked' : '' ?>>
-                            <span class="formato-nome">Livro físico</span>
-                            <span class="formato-preco"><?= preco_html($livro['preco_fisico'], $livro['desconto_fisico']) ?></span>
-                            <span class="formato-nota">
-                                <?= $tem_fisico
-                                    ? ($estoque === 1 ? 'Último exemplar em estoque' : $estoque . ' em estoque')
-                                    : 'Esgotado' ?>
-                            </span>
-                        </label>
-                        <?php endif; ?>
-
-                        <?php if ($tem_digital): ?>
-                            <label class="formato formato-digital">
-                                <input type="radio" name="formato" value="digital"
-                                    <?= $formato_padrao === 'digital' ? 'checked' : '' ?>>
-                                <span class="formato-nome">E-book</span>
-                                <span class="formato-preco"><?= preco_html($livro['preco_digital'], $livro['desconto_digital']) ?></span>
-                                <span class="formato-nota">Sem frete. Download liberado após o pagamento.</span>
-                            </label>
-                        <?php endif; ?>
-                    </fieldset>
-
-                    <?php if ($tem_fisico): ?>
-                        <div class="quantidade" data-so-fisico>
-                            <label for="quantidade">Quantidade</label>
-                            <input type="number" id="quantidade" name="quantidade"
-                                   value="1" min="1" max="<?= $estoque ?>">
-                        </div>
-                    <?php endif; ?>
-
+                <?php if ($no_carrinho): ?>
+                    <a class="botao" href="carrinho.php">Já está no carrinho: ver carrinho</a>
+                <?php else: ?>
                     <button type="submit" class="botao">Adicionar ao carrinho</button>
-                </form>
-            <?php endif; ?>
+                <?php endif; ?>
+            </form>
         </div>
     </article>
 

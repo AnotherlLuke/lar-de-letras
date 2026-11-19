@@ -7,8 +7,6 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once __DIR__ . '/conexao.php';
 
-const FRETE_FIXO = 12.90;
-
 /** Escapa texto para exibir no HTML com segurança. */
 function e($texto): string
 {
@@ -102,18 +100,15 @@ function ler_preco(?string $texto): ?float
     return is_numeric($texto) ? round((float) $texto, 2) : null;
 }
 
-/** Capa do livro: a imagem enviada ou, se não houver, uma capa desenhada na cor do gênero. */
+/** Imagem usada quando o livro não tem capa ou a capa não pode ser carregada. */
+const CAPA_PADRAO = 'no-cover.png';
+
+/** Capa do livro: a imagem enviada ou, se não houver (ou o arquivo sumir), imagens/no-cover.png. */
 function capa(array $livro, string $alt = ''): string
 {
-    if (!empty($livro['imagem'])) {
-        return '<img src="imagens/' . e($livro['imagem']) . '" alt="' . e($alt) . '" loading="lazy">';
-    }
-    $estilo = isset($livro['genero_cor']) ? ' style="' . cores_genero($livro) . '"' : '';
-    $rotulo = $alt !== '' ? ' role="img" aria-label="' . e($alt) . '"' : ' aria-hidden="true"';
-    return '<span class="capa-desenhada"' . $estilo . $rotulo . '>'
-         . '<span class="capa-desenhada-titulo">' . e($livro['titulo']) . '</span>'
-         . '<span class="capa-desenhada-autor">' . e($livro['autor']) . '</span>'
-         . '</span>';
+    $imagem = !empty($livro['imagem']) ? $livro['imagem'] : CAPA_PADRAO;
+    return '<img src="imagens/' . e($imagem) . '" alt="' . e($alt) . '" loading="lazy"'
+         . ' onerror="this.onerror=null;this.src=\'imagens/' . CAPA_PADRAO . '\'">';
 }
 
 /** Guarda uma mensagem para mostrar na próxima página. $tipo: 'ok' ou 'erro'. */
@@ -176,11 +171,8 @@ function ordenar_banner(array $livros): array
 /** Texto automático acima do título: por que o livro está no banner. */
 function motivo_destaque(array $livro): string
 {
-    if ($livro['preco_fisico'] !== null && $livro['desconto_fisico'] > 0) {
-        return 'Promoção: ' . (int) $livro['desconto_fisico'] . '% de desconto no livro físico';
-    }
-    if ($livro['preco_digital'] !== null && $livro['desconto_digital'] > 0) {
-        return 'Promoção: ' . (int) $livro['desconto_digital'] . '% de desconto no e-book';
+    if ($livro['desconto'] > 0) {
+        return 'Promoção: ' . (int) $livro['desconto'] . '% de desconto';
     }
     if ($livro['lancamento']) {
         return 'Acabou de chegar em ' . $livro['genero_nome'];
@@ -226,19 +218,77 @@ function cores_banner(array $livro): string
 }
 
 /* ---------- Carrinho (fica na sessão) ----------
-   $_SESSION['carrinho'] = ['12-fisico' => 2, '4-digital' => 1, ...] */
+   $_SESSION['carrinho'] = [12 => true, 4 => true, ...]: os ids dos ebooks (uma cópia de cada). */
 
 function carrinho(): array
 {
-    return $_SESSION['carrinho'] ?? [];
+    // Descarta itens no formato antigo ("12-fisico" => 2), de antes da loja vender só ebooks.
+    return array_filter($_SESSION['carrinho'] ?? [], fn($id) => is_int($id), ARRAY_FILTER_USE_KEY);
 }
 
 function carrinho_quantidade(): int
 {
-    return array_sum(carrinho());
+    return count(carrinho());
 }
 
-function chave_carrinho(int $id, string $formato): string
+/* ---------- Pedidos ---------- */
+
+/** Formas de pagamento aceitas (protótipo: nada é cobrado). */
+const FORMAS_PAGAMENTO = ['pix' => 'Pix', 'cartao' => 'Cartão de crédito'];
+
+/** Situação do pedido. Todo pedido começa em "confirmando"; o admin muda em Gerenciar livros → Pedidos. */
+const STATUS_PEDIDO = [
+    'confirmando' => 'Confirmando pagamento',
+    'enviado'     => 'Enviado',
+    'cancelado'   => 'Cancelado',
+];
+
+/** Etiqueta colorida com a situação do pedido. */
+function status_html(string $status): string
 {
-    return $id . '-' . $formato;
+    return '<span class="status status-' . e($status) . '">' . e(STATUS_PEDIDO[$status] ?? $status) . '</span>';
+}
+
+/** Data do pedido: 18/11/2026 às 14:05 */
+function data_pedido(string $data): string
+{
+    return date('d/m/Y \à\s H:i', strtotime($data));
+}
+
+/**
+ * Pedidos com os itens de cada um, mais novos primeiro.
+ * Com $usuario_id, só os desse cliente; sem, todos (com nome do cliente, para o admin).
+ */
+function buscar_pedidos(PDO $conexao, ?int $usuario_id = null): array
+{
+    $sql = "SELECT p.*, u.nome AS cliente FROM pedidos p JOIN usuarios u ON u.id = p.usuario_id";
+    $parametros = [];
+    if ($usuario_id !== null) {
+        $sql .= " WHERE p.usuario_id = :usuario";
+        $parametros['usuario'] = $usuario_id;
+    }
+    $consulta = $conexao->prepare($sql . " ORDER BY p.criado_em DESC, p.id DESC");
+    $consulta->execute($parametros);
+
+    $pedidos = [];
+    foreach ($consulta->fetchAll() as $pedido) {
+        $pedido['itens'] = [];
+        $pedidos[(int) $pedido['id']] = $pedido;
+    }
+    if ($pedidos) {
+        $marcadores = implode(',', array_fill(0, count($pedidos), '?'));
+        // a capa vem do livro; se ele saiu do catálogo, aparece imagens/no-cover.png
+        $itens = $conexao->prepare(
+            "SELECT i.*, l.imagem
+               FROM pedido_itens i
+               LEFT JOIN livros l ON l.id = i.livro_id
+              WHERE i.pedido_id IN ($marcadores)
+              ORDER BY i.titulo"
+        );
+        $itens->execute(array_keys($pedidos));
+        foreach ($itens->fetchAll() as $item) {
+            $pedidos[(int) $item['pedido_id']]['itens'][] = $item;
+        }
+    }
+    return array_values($pedidos);
 }

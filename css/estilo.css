@@ -8,7 +8,7 @@
     --tinta: #241B3D;
     --papel: #FFFFFF;
     --fundo: #F1F2F4;         /* fundo do site; os blocos de conteúdo ficam brancos por cima */
-    --roxo: #6A3DB8;          /* cor da marca: header, botões, e-book */
+    --roxo: #6A3DB8;          /* cor da marca: header e botões */
     --roxo-escuro: #522C96;
     --roxo-noite: #2B1B4D;    /* rodapé */
     --lavanda: #E6DCF7;       /* texto claro sobre o roxo */
@@ -17,8 +17,6 @@
     --grafite: #5E5873;
     --linha: #E1DBEC;
     --ambar: #F6C344;
-    --digital: var(--roxo);
-    --digital-claro: #F1EBF9;
     --erro: #B42318;
     --erro-claro: #FDECEA;
     --ok: #1F6B47;
@@ -530,20 +528,6 @@ p {
     transform: translateY(-6px);
 }
 
-.tag-digital {
-    position: absolute;
-    top: 10px;
-    left: -6px;
-    padding: 3px 9px 4px;
-    border-radius: 2px 4px 4px 2px;
-    background: var(--digital);
-    color: #FFFFFF;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.2;
-    box-shadow: 0 1px 2px rgba(29, 34, 56, 0.3);
-}
-
 .livro-titulo {
     margin-top: 14px;
     font-size: var(--t-16);
@@ -572,22 +556,6 @@ p {
     font-variant-numeric: tabular-nums;
 }
 
-.esgotado {
-    color: var(--grafite);
-    font-weight: 500;
-    font-size: var(--t-14);
-}
-
-.livro-autor + .livro-ebook {
-    margin-top: 8px;
-}
-
-.livro-ebook {
-    color: var(--digital);
-    font-size: var(--t-14);
-    font-weight: 600;
-}
-
 /* ---------- Promoção ---------- */
 
 .preco-antigo {
@@ -607,20 +575,6 @@ p {
     line-height: 1.4;
     vertical-align: 1px;
     white-space: nowrap;
-}
-
-.livro-ebook .preco-antigo {
-    color: var(--digital);
-    opacity: 0.75;
-}
-
-.formato-preco .preco-antigo {
-    display: block;
-    text-align: right;
-}
-
-.item-formato .selo-desconto {
-    margin-left: 6px;
 }
 
 /* ---------- Vitrine (destaque da home) ---------- */
@@ -655,8 +609,7 @@ p {
     color: var(--cor-texto);
 }
 
-.vitrine-capa img,
-.vitrine-capa .capa-desenhada {
+.vitrine-capa img {
     width: 240px;
     aspect-ratio: var(--capa);
     object-fit: cover;
@@ -868,77 +821,16 @@ html:not(.js) .vitrine-pontos {
     margin-top: 32px;
 }
 
-.formatos {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 12px;
-    margin: 0;
-    padding: 0;
-    border: 0;
-}
-
-.formatos legend {
-    margin-bottom: 12px;
-    padding: 0;
-    font-weight: 600;
-}
-
-.formato {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: baseline;
-    gap: 2px 10px;
-    padding: 16px;
-    border: 2px solid var(--linha);
-    border-radius: var(--raio);
-    cursor: pointer;
-}
-
-.formato input {
-    margin: 0;
-    accent-color: var(--tinta);
-}
-
-.formato-nome {
-    font-weight: 600;
-}
-
-.formato-preco {
+.compra-preco {
+    font-size: var(--t-25);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
 }
 
-.formato-nota {
-    grid-column: 2 / -1;
+.compra-nota {
+    margin-top: 4px;
     color: var(--grafite);
     font-size: var(--t-14);
-}
-
-.formato:has(input:checked) {
-    border-color: var(--tinta);
-    background: var(--prateleira);
-}
-
-.formato-digital input {
-    accent-color: var(--digital);
-}
-
-.formato-digital:has(input:checked) {
-    border-color: var(--digital);
-    background: var(--digital-claro);
-}
-
-.formato.indisponivel {
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-.quantidade {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 20px;
-    font-weight: 600;
 }
 
 input[type="number"] {
@@ -975,10 +867,10 @@ input[type="number"] {
 
 .item {
     display: grid;
-    grid-template-columns: 72px minmax(0, 1fr) auto auto;
+    grid-template-columns: 72px minmax(0, 1fr) auto;
     grid-template-areas:
-        "capa info quantidade preco"
-        "capa info quantidade remover";
+        "capa info preco"
+        "capa info remover";
     gap: 4px 28px;
     align-items: center;
     padding: 20px 0;
@@ -987,7 +879,6 @@ input[type="number"] {
 
 .item-capa     { grid-area: capa; align-self: start; }
 .item-info     { grid-area: info; }
-.item-quantidade { grid-area: quantidade; }
 .item-preco    { grid-area: preco; }
 .item-remover  { grid-area: remover; justify-self: end; }
 
@@ -1017,35 +908,8 @@ input[type="number"] {
     font-size: var(--t-14);
 }
 
-.item-formato {
+.item-promo {
     margin-top: 6px;
-    font-size: var(--t-14);
-    font-weight: 600;
-}
-
-.item-formato.digital {
-    color: var(--digital);
-}
-
-.form-quantidade {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.form-quantidade label,
-.item-unico {
-    color: var(--grafite);
-    font-size: var(--t-14);
-}
-
-/* com JavaScript a quantidade é enviada sozinha */
-.js .atualizar {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
 }
 
 .item-preco {
@@ -1053,13 +917,6 @@ input[type="number"] {
     text-align: right;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
-}
-
-.item-preco span {
-    display: block;
-    color: var(--grafite);
-    font-size: var(--t-14);
-    font-weight: 500;
 }
 
 .resumo {
@@ -1076,6 +933,44 @@ input[type="number"] {
 
 .resumo dl {
     margin: 16px 0 20px;
+}
+
+.pagamento {
+    display: grid;
+    gap: 8px;
+    margin: 20px 0 16px;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+}
+
+.pagamento legend {
+    margin-bottom: 8px;
+    padding: 0;
+    font-weight: 600;
+}
+
+.pagamento-opcao {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 2px solid var(--linha);
+    border-radius: var(--raio);
+    background: var(--papel);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.pagamento-opcao input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--roxo);
+}
+
+.pagamento-opcao:has(input:checked) {
+    border-color: var(--roxo);
 }
 
 .resumo dl div {
@@ -1118,7 +1013,241 @@ input[type="number"] {
 }
 
 .confirmacao p {
-    margin: 12px 0 24px;
+    margin: 12px 0 0;
+}
+
+.confirmacao-destaque {
+    font-size: var(--t-20);
+    font-weight: 600;
+}
+
+.confirmacao-detalhes {
+    margin: 16px 0 0;
+}
+
+.confirmacao-detalhes div {
+    display: flex;
+    gap: 12px;
+    padding: 4px 0;
+}
+
+.confirmacao-detalhes dt {
+    flex: 0 0 90px;
+    color: var(--grafite);
+}
+
+.confirmacao-detalhes dd {
+    margin: 0;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.confirmacao-nota {
+    color: var(--grafite);
+    font-size: var(--t-14);
+}
+
+.confirmacao-botoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+/* ---------- Pedidos ---------- */
+
+.status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: var(--t-14);
+    font-weight: 700;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.status-confirmando {
+    background: #FDF3D7;
+    color: #7A5300;
+}
+
+.status-enviado {
+    background: var(--ok-claro);
+    color: var(--ok);
+}
+
+.status-cancelado {
+    background: var(--erro-claro);
+    color: var(--erro);
+}
+
+.pedidos {
+    display: grid;
+    gap: 20px;
+    margin: 24px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.pedido {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    grid-template-areas:
+        "capa topo"
+        "capa explicacao"
+        "capa rodape";
+    align-items: start;
+    gap: 6px 20px;
+    padding: 20px 24px;
+    border: 1px solid var(--linha);
+    border-left: 4px solid #E3B23C;
+    border-radius: 0 8px 8px 0;
+    background: var(--papel);
+}
+
+.pedido-enviado   { border-left-color: var(--ok); }
+.pedido-cancelado { border-left-color: var(--erro); }
+
+.pedido-capa       { grid-area: capa; position: relative; }
+.pedido-topo       { grid-area: topo; }
+.pedido-explicacao { grid-area: explicacao; }
+.pedido-rodape     { grid-area: rodape; }
+
+.pedido-capa img {
+    display: block;
+    width: 100%;
+    aspect-ratio: var(--capa);
+    object-fit: cover;
+    border-radius: 1px 3px 3px 1px;
+    box-shadow: 0 1px 2px rgba(29, 34, 56, 0.25);
+}
+
+/* mais de um ebook no pedido: "+2" no canto da capa */
+.pedido-mais {
+    position: absolute;
+    right: -8px;
+    bottom: -8px;
+    min-width: 32px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: var(--tinta);
+    color: #FFFFFF;
+    font-size: var(--t-14);
+    font-weight: 700;
+    text-align: center;
+}
+
+.pedido-topo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px 16px;
+}
+
+.pedido-numero {
+    font-size: var(--t-20);
+}
+
+.pedido-data,
+.pedido-autor {
+    color: var(--grafite);
+    font-size: var(--t-14);
+}
+
+/* ebooks | pagamento e total | botão cancelar, na mesma linha */
+.pedido-rodape {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 12px 40px;
+    margin-top: 10px;
+}
+
+.pedido-itens {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.pedido-itens li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    padding: 4px 0;
+}
+
+.pedido-itens a,
+.pedido-titulo {
+    font-weight: 600;
+    text-underline-offset: 3px;
+}
+
+.pedido-autor {
+    display: block;
+}
+
+.pedido-preco {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.pedido-resumo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    margin: 0;
+}
+
+/* pedido sem o botão de cancelar: pagamento e total ficam encostados à direita */
+.pedido-resumo:last-child {
+    grid-column: 2 / -1;
+    justify-self: end;
+}
+
+.pedido-resumo div {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.pedido-resumo dt {
+    color: var(--grafite);
+}
+
+.pedido-resumo dd {
+    margin: 0;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.botao-cancelar {
+    min-height: 44px;
+    padding: 0 22px;
+    border-color: var(--erro);
+    background: var(--erro);
+    color: #FFFFFF;
+}
+
+.botao-cancelar:hover {
+    border-color: #8F1C13;
+    background: #8F1C13;
+}
+
+.pedido-status-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pedido-status-form select {
+    padding: 8px 10px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio);
+    background: var(--papel);
+    font: inherit;
+    color: inherit;
 }
 
 /* ---------- Login ---------- */
@@ -1188,81 +1317,6 @@ input[type="number"] {
     border-radius: 0 var(--raio) var(--raio) 0;
     background: var(--erro-claro);
     font-size: var(--t-14);
-}
-
-/* ---------- Capa desenhada (livro sem imagem) ---------- */
-
-.capa-desenhada {
-    --cor: var(--tinta);
-    --cor-texto: #FFFFFF;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 12px;
-    width: 100%;
-    aspect-ratio: var(--capa);
-    padding: 44px 14px 16px 22px; /* espaço para a etiqueta "digital" */
-    border-radius: 1px 3px 3px 1px;
-    background: var(--cor);
-    color: var(--cor-texto);
-    box-shadow: 0 1px 2px rgba(29, 34, 56, 0.25);
-    overflow: hidden;
-}
-
-/* filetes da lombada, iguais aos da estante */
-.capa-desenhada::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 8px;
-    width: 6px;
-    border-left: 2px solid currentColor;
-    border-right: 2px solid currentColor;
-    opacity: 0.35;
-}
-
-.capa-desenhada-titulo {
-    font: 700 var(--t-16) / 1.2 var(--serif);
-    overflow-wrap: anywhere;
-}
-
-.capa-desenhada-autor {
-    font-size: 12px;
-    font-weight: 600;
-    opacity: 0.85;
-}
-
-.vitrine-capa .capa-desenhada,
-.ficha-capa .capa-desenhada {
-    width: 100%;
-    padding: 28px 24px 24px 34px;
-}
-
-.vitrine-capa .capa-desenhada {
-    width: 240px;
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    transform: rotate(-2deg);
-}
-
-.ficha-capa .capa-desenhada-titulo {
-    font-size: var(--t-31);
-}
-
-.ficha-capa .capa-desenhada-autor {
-    font-size: var(--t-16);
-}
-
-.item-capa .capa-desenhada,
-.admin-capa .capa-desenhada {
-    width: 100%;
-    padding: 0;
-}
-
-.item-capa .capa-desenhada span,
-.admin-capa .capa-desenhada span {
-    display: none;
 }
 
 /* ---------- Administração ---------- */
@@ -1341,16 +1395,10 @@ input[type="number"] {
     border-radius: 1px 2px 2px 1px;
 }
 
-.admin-autor,
-.admin-estoque {
+.admin-autor {
     display: block;
     color: var(--grafite);
     font-size: var(--t-14);
-}
-
-.admin-estoque.zerado {
-    color: var(--erro);
-    font-weight: 600;
 }
 
 .admin-genero {
@@ -1367,16 +1415,6 @@ input[type="number"] {
     height: 18px;
     border-radius: 1px 2px 2px 1px;
     background: var(--cor);
-}
-
-.admin-nao {
-    color: var(--grafite);
-    font-size: var(--t-14);
-}
-
-.admin-digital {
-    color: var(--digital);
-    font-weight: 600;
 }
 
 .admin-acoes {
@@ -1421,10 +1459,6 @@ input[type="number"] {
 
 .previa-preco strong {
     font-size: var(--t-16);
-}
-
-.dica-formatos {
-    grid-column: 1 / -1;
 }
 
 .capa-atual {
@@ -1716,55 +1750,20 @@ input[type="number"] {
     padding: 0;
 }
 
-.formatos-admin {
+.preco-admin {
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: start;
     gap: 12px;
 }
 
-.formatos-admin legend,
-.formatos-admin > .erro-campo {
+.preco-admin legend,
+.preco-admin .dica {
     grid-column: 1 / -1;
 }
 
-.formato-admin {
-    padding: 16px;
-    border: 2px solid var(--linha);
-    border-radius: var(--raio);
-    background: var(--papel);
-}
-
-.formato-admin:has(input[type="checkbox"]:checked) {
-    border-color: var(--tinta);
-}
-
-.formato-admin-digital:has(input[type="checkbox"]:checked) {
-    border-color: var(--digital);
-}
-
-.formato-admin-digital input[type="checkbox"] {
-    accent-color: var(--digital);
-}
-
-/* os campos de preço só aparecem quando o formato está marcado */
-.formato-admin:has(input[type="checkbox"]:not(:checked)) .formato-campos {
-    display: none;
-}
-
-.formato-campos {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 14px;
-}
-
-.formato-campos .campo {
+.preco-admin .campo {
     grid-column: auto;
-}
-
-.formato-campos .dica {
-    grid-column: 1 / -1;
 }
 
 .marcar {
@@ -1949,8 +1948,7 @@ input[type="number"] {
         padding: 32px 24px 64px;
     }
 
-    .vitrine-capa img,
-    .vitrine-capa .capa-desenhada {
+    .vitrine-capa img {
         width: 160px;
     }
 
@@ -1987,6 +1985,17 @@ input[type="number"] {
     }
 }
 
+@media (max-width: 860px) {
+    .pedido-rodape {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .pedido-cancelar {
+        grid-column: 1 / -1;
+        justify-self: end;
+    }
+}
+
 @media (max-width: 640px) {
     .secao,
     .ficha,
@@ -2001,6 +2010,33 @@ input[type="number"] {
 
     .conta-nome {
         display: none;
+    }
+
+    .conta {
+        gap: 14px;
+    }
+
+    .pedido {
+        grid-template-columns: 64px minmax(0, 1fr);
+        grid-template-areas:
+            "capa topo"
+            "explicacao explicacao"
+            "rodape rodape";
+        padding: 20px 16px;
+    }
+
+    .pedido-rodape {
+        grid-template-columns: 1fr;
+    }
+
+    .pedido-resumo:last-child {
+        grid-column: auto;
+        justify-self: start;
+    }
+
+    .pedido-cancelar,
+    .botao-cancelar {
+        width: 100%;
     }
 
     .prateleira {
@@ -2027,8 +2063,7 @@ input[type="number"] {
         grid-template-columns: 60px minmax(0, 1fr) auto;
         grid-template-areas:
             "capa info info"
-            "capa quantidade preco"
-            "capa remover remover";
+            "capa remover preco";
         gap: 10px 16px;
     }
 
@@ -2054,8 +2089,7 @@ input[type="number"] {
         grid-column: 1 / -1;
     }
 
-    .formatos-admin,
-    .formato-campos {
+    .preco-admin {
         grid-template-columns: 1fr;
     }
 
