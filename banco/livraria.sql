@@ -25,7 +25,7 @@ CREATE TABLE livros (
     idioma         VARCHAR(30)  NOT NULL DEFAULT 'Português',
     ano            SMALLINT     NULL,
     paginas        SMALLINT UNSIGNED NULL,
-    imagem         VARCHAR(160) NULL,          -- NULL = sem capa (o site usa imagens/no-cover.png)
+    imagem         VARCHAR(160) NULL,          -- NULL = sem capa (o site usa imagens/covers/no-cover.png)
     preco          DECIMAL(8,2) NOT NULL,      -- preço do ebook
     desconto       TINYINT UNSIGNED NOT NULL DEFAULT 0,  -- % de desconto (promoção), 0 a 100
     lancamento     TINYINT(1)   NOT NULL DEFAULT 0,

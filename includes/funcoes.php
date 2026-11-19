@@ -103,12 +103,12 @@ function ler_preco(?string $texto): ?float
 /** Imagem usada quando o livro não tem capa ou a capa não pode ser carregada. */
 const CAPA_PADRAO = 'no-cover.png';
 
-/** Capa do livro: a imagem enviada ou, se não houver (ou o arquivo sumir), imagens/no-cover.png. */
+/** Capa do livro: a imagem enviada ou, se não houver (ou o arquivo sumir), imagens/covers/no-cover.png. */
 function capa(array $livro, string $alt = ''): string
 {
     $imagem = !empty($livro['imagem']) ? $livro['imagem'] : CAPA_PADRAO;
-    return '<img src="imagens/' . e($imagem) . '" alt="' . e($alt) . '" loading="lazy"'
-         . ' onerror="this.onerror=null;this.src=\'imagens/' . CAPA_PADRAO . '\'">';
+    return '<img src="imagens/covers/' . e($imagem) . '" alt="' . e($alt) . '" loading="lazy"'
+         . ' onerror="this.onerror=null;this.src=\'imagens/covers/' . CAPA_PADRAO . '\'">';
 }
 
 /** Guarda uma mensagem para mostrar na próxima página. $tipo: 'ok' ou 'erro'. */
@@ -277,7 +277,7 @@ function buscar_pedidos(PDO $conexao, ?int $usuario_id = null): array
     }
     if ($pedidos) {
         $marcadores = implode(',', array_fill(0, count($pedidos), '?'));
-        // a capa vem do livro; se ele saiu do catálogo, aparece imagens/no-cover.png
+        // a capa vem do livro; se ele saiu do catálogo, aparece imagens/covers/no-cover.png
         $itens = $conexao->prepare(
             "SELECT i.*, l.imagem
                FROM pedido_itens i

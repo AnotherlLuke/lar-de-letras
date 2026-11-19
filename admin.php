@@ -33,11 +33,14 @@ function preco_campo($valor): string
     return $valor === null ? '' : number_format((float) $valor, 2, ',', '');
 }
 
-/** Apaga a capa só se ela foi enviada pelo admin (as do catálogo inicial ficam). */
+/**
+ * Apaga a capa só se ela foi enviada pelo admin (as do catálogo inicial ficam).
+ * As enviadas terminam com um código de 6 caracteres: "dom-casmurro-a1b2c3.jpg".
+ */
 function apagar_capa_enviada(?string $imagem): void
 {
-    if ($imagem && str_starts_with($imagem, 'enviadas/')) {
-        $arquivo = __DIR__ . '/imagens/' . $imagem;
+    if ($imagem && preg_match('/-[0-9a-f]{6}\.(jpg|png|webp)$/', $imagem)) {
+        $arquivo = __DIR__ . '/imagens/covers/' . basename($imagem);
         if (is_file($arquivo)) {
             unlink($arquivo);
         }
@@ -382,15 +385,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $remover_capa = $acao === 'salvar' && isset($_POST['remover_capa']) && !$capa_tipo;
 
         if (!$erros && $capa_tipo) {
-            $nova = 'enviadas/' . nome_arquivo($dados['titulo']) . '-' . bin2hex(random_bytes(3)) . '.' . $capa_tipo;
-            if (!is_dir(__DIR__ . '/imagens/enviadas')) {
-                mkdir(__DIR__ . '/imagens/enviadas', 0775, true);
-            }
-            if (move_uploaded_file($capa['tmp_name'], __DIR__ . '/imagens/' . $nova)) {
+            $nova = nome_arquivo($dados['titulo']) . '-' . bin2hex(random_bytes(3)) . '.' . $capa_tipo;
+            if (move_uploaded_file($capa['tmp_name'], __DIR__ . '/imagens/covers/' . $nova)) {
                 apagar_capa_enviada($imagem); // troca a capa antiga
                 $imagem = $nova;
             } else {
-                $erros['capa'] = 'Não foi possível salvar a capa na pasta imagens/enviadas.';
+                $erros['capa'] = 'Não foi possível salvar a capa na pasta imagens/covers.';
             }
         }
 
@@ -940,7 +940,7 @@ require __DIR__ . '/includes/cabecalho.php';
                 <label for="capa"><?= $editando ? 'Trocar a capa' : 'Capa do livro' ?></label>
                 <?php if ($editando && $livro_editado['imagem']): ?>
                     <div class="capa-atual">
-                        <img src="imagens/<?= e($livro_editado['imagem']) ?>" alt="Capa atual">
+                        <img src="imagens/covers/<?= e($livro_editado['imagem']) ?>" alt="Capa atual">
                         <label class="marcar">
                             <input type="checkbox" name="remover_capa">
                             Remover a capa atual
