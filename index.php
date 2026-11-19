@@ -50,7 +50,7 @@ require __DIR__ . '/includes/cabecalho.php';
 
 <?php else: ?>
 
-    <h1 class="so-leitor">Lar de Letras, livraria digital</h1>
+    <h1 class="so-leitor">Lar de Letras, loja de ebooks</h1>
 
     <?php if ($destaques): $total_destaques = count($destaques); ?>
         <section class="vitrine" aria-roledescription="carrossel" aria-label="Destaques" data-carrossel>
@@ -70,13 +70,7 @@ require __DIR__ . '/includes/cabecalho.php';
                             <?php endif; ?>
                             <div class="vitrine-acao">
                                 <a class="botao botao-claro" href="<?= $link ?>">Ver livro</a>
-                                <p class="vitrine-preco">
-                                    <?php if ($destaque['preco_fisico'] !== null): ?>
-                                        <?= preco_html($destaque['preco_fisico'], $destaque['desconto_fisico']) ?>
-                                    <?php else: ?>
-                                        E-book <?= preco_html($destaque['preco_digital'], $destaque['desconto_digital']) ?>
-                                    <?php endif; ?>
-                                </p>
+                                <p class="vitrine-preco"><?= preco_html($destaque['preco'], $destaque['desconto']) ?></p>
                             </div>
                         </div>
                     </article>

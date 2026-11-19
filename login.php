@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $erros['entrar'] = $usuario
             ? 'Senha incorreta. Confira e tente de novo.'
-            : 'Não encontramos uma conta com esse e-mail ou usuário. Crie uma ao lado.';
+            : 'Não encontramos uma conta com esse email. Crie uma ao lado.';
     }
 
     if ($acao === 'cadastrar') {
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($nome === '') {
             $erros['cadastrar'] = 'Informe seu nome.';
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $erros['cadastrar'] = 'Informe um e-mail válido, como nome@exemplo.com.';
+            $erros['cadastrar'] = 'Informe um email válido, como nome@exemplo.com. É para ele que enviamos os ebooks.';
         } elseif (strlen($senha) < 6) {
             $erros['cadastrar'] = 'A senha precisa ter pelo menos 6 caracteres.';
         } else {
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $consulta->execute(['email' => $email]);
 
             if ($consulta->fetch()) {
-                $erros['cadastrar'] = 'Este e-mail já tem conta. Entre com sua senha ao lado.';
+                $erros['cadastrar'] = 'Este email já tem conta. Entre com sua senha ao lado.';
                 $campos['email_entrar'] = $email;
             } else {
                 $consulta = $conexao->prepare(
@@ -96,8 +96,8 @@ require __DIR__ . '/includes/cabecalho.php';
                 <p class="erro-form" role="alert"><?= e($erros['entrar']) ?></p>
             <?php endif; ?>
 
-            <label for="entrar-email">E-mail ou usuário</label>
-            <input type="text" id="entrar-email" name="email" autocomplete="username" required
+            <label for="entrar-email">Email</label>
+            <input type="email" id="entrar-email" name="email" autocomplete="username" required
                    value="<?= e($campos['email_entrar']) ?>" placeholder="nome@exemplo.com">
 
             <label for="entrar-senha">Senha</label>
@@ -118,9 +118,10 @@ require __DIR__ . '/includes/cabecalho.php';
             <input type="text" id="cadastro-nome" name="nome" autocomplete="name" required
                    value="<?= e($campos['nome']) ?>">
 
-            <label for="cadastro-email">E-mail</label>
+            <label for="cadastro-email">Email</label>
             <input type="email" id="cadastro-email" name="email" autocomplete="email" required
-                   value="<?= e($campos['email_cadastrar']) ?>" placeholder="nome@exemplo.com">
+                   value="<?= e($campos['email_cadastrar']) ?>" placeholder="nome@exemplo.com" aria-describedby="dica-email">
+            <p class="dica" id="dica-email">Os ebooks que você comprar são enviados para este email.</p>
 
             <label for="cadastro-senha">Senha</label>
             <input type="password" id="cadastro-senha" name="senha" autocomplete="new-password"

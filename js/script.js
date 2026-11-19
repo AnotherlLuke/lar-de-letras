@@ -4,8 +4,6 @@ document.documentElement.classList.add('js');
 document.addEventListener('DOMContentLoaded', () => {
     medirHeader();
     destacarGeneroVisivel();
-    alternarQuantidade();
-    atualizarQuantidadeAoMudar();
     confirmarAntesDeEnviar();
     previaDoPrecoComDesconto();
     carrosselDoBanner();
@@ -193,25 +191,4 @@ function destacarGeneroVisivel() {
     window.addEventListener('scroll', () => {
         if (catalogo && catalogo.getBoundingClientRect().top > window.innerHeight * 0.4) marcar(null);
     }, { passive: true });
-}
-
-// Página do livro: a quantidade só faz sentido para o livro físico.
-function alternarQuantidade() {
-    const campo = document.querySelector('[data-so-fisico]');
-    const opcoes = document.querySelectorAll('input[name="formato"]');
-    if (!campo || !opcoes.length) return;
-
-    const atualizar = () => {
-        const escolhido = document.querySelector('input[name="formato"]:checked');
-        campo.hidden = !escolhido || escolhido.value !== 'fisico';
-    };
-    opcoes.forEach((opcao) => opcao.addEventListener('change', atualizar));
-    atualizar();
-}
-
-// Carrinho: envia a nova quantidade assim que o valor muda.
-function atualizarQuantidadeAoMudar() {
-    document.querySelectorAll('.form-quantidade input[type="number"]').forEach((campo) => {
-        campo.addEventListener('change', () => campo.form.submit());
-    });
 }
