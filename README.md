@@ -1,7 +1,10 @@
 # Lar de Letras — loja de ebooks
 
-Protótipo do site da Lar de Letras, uma loja que vende só ebooks (projeto de extensão em programação, UNINOVE).
-Feito em PHP, HTML5, CSS e um pouco de JavaScript. Roda no XAMPP, no Windows ou no Linux.
+Protótipo do site da Lar de Letras, uma loja que vende só ebooks (Projeto de Extensão em Programação, UNINOVE).
+
+Feito em PHP, HTML5, CSS e JavaScript.
+O projeto foi feito para rodar no Xampp, funcionando tanto no Windows quanto Linux.
+
 
 ## Páginas
 
@@ -47,8 +50,8 @@ A conta do admin gerencia a loja e não faz compras.
 
 O padrão da loja é **900 × 1200 px (proporção 3:4)**. Capas em outra proporção são exibidas em 3:4 com um pequeno corte
 nas bordas, então vale salvar as novas já nesse tamanho.
-As capas enviadas ficam em `imagens/enviadas/`, e essa pasta precisa existir e aceitar gravação. No Windows/XAMPP ela já funciona.
-Livro sem capa (ou com uma imagem que não abre) aparece com `imagens/no-cover.png`.
+Todas as capas (as do catálogo inicial e as enviadas pelo admin) ficam em `imagens/covers/`, e essa pasta precisa aceitar gravação. No Windows/XAMPP ela já funciona.
+Livro sem capa (ou com uma imagem que não abre) aparece com `imagens/covers/no-cover.png`.
 
 ## Como rodar no XAMPP (Windows)
 
@@ -56,10 +59,9 @@ Livro sem capa (ou com uma imagem que não abre) aparece com `imagens/no-cover.p
 2. Abra o **XAMPP Control Panel** e clique em **Start** no **Apache** e no **MySQL**.
 3. Acesse <http://localhost/lar-de-letras/>.
    Na primeira visita, se o banco `livraria` não existir, o site cria sozinho com os dados de
-   `banco/livraria.sql` (7 gêneros, 23 livros e o usuário admin). Não precisa importar nada.
-   Para voltar aos dados padrão, apague o banco `livraria` no phpMyAdmin e recarregue o site
+   `banco/livraria.sql` (7 gêneros, 23 livros e o usuário admin). Não precisa importar nada. 
+   Para voltar aos dados padrão, apague o banco `livraria` no MySQL ou phpMyAdmin e recarregue o site.
    (ou importe `banco/livraria.sql` na aba **Importar**, que apaga e recria o banco).
-   Já tinha um banco `livraria` de uma versão antiga do site? Apague-o e recarregue o site para recriá-lo.
 
 ## Como rodar no Linux
 
@@ -83,18 +85,7 @@ lar-de-letras/
   includes/   conexao, funções, cabeçalho, rodapé e o card do livro
   css/        estilo.css
   js/         script.js (opcional: destaque da estante, carrossel e prévias do admin)
-  imagens/    capas (nomes em minúsculas, sem acento e sem espaço)
+  imagens/    covers/ (capas, em minúsculas, sem acento e sem espaço) e icons/ (ícone do site)
   banco/      livraria.sql (estrutura e dados padrão do banco)
 ```
 
-## Regras para manter o projeto funcionando no Windows e no Linux
-
-- Nomes de arquivos e imagens em **minúsculas, sem acentos e sem espaços** (`minha-capa.jpg`).
-  O Linux diferencia `Capa.jpg` de `capa.jpg`; o Windows não.
-- Salve os arquivos `.php` em **UTF-8 sem BOM**. O BOM causa o erro "headers already sent".
-- Use `__DIR__` nos `require` (`require __DIR__ . '/includes/funcoes.php';`).
-
-## Para adicionar um livro
-
-Use a área do administrador (`admin.php`). Pelo phpMyAdmin também funciona:
-`preco` é o preço do ebook (obrigatório, maior que zero) e `desconto` a porcentagem da promoção (0 a 100).
