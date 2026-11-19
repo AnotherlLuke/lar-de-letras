@@ -1,0 +1,7 @@
+<?php
+// Se você ja tiver instalado o MySQL, precisa por a sua senha embaixo
+// Para garantir que o Xampp tenha permissão de abrir o server
+$senha = "";
+
+
+// Salvar o arquivo como: "conexao.local.php"
