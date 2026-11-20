@@ -39,6 +39,8 @@
     --raio: 6px;
     --largura: 1800px;
     --margem: 40px;
+    --estante-largura: 280px; /* coluna dos gêneros à esquerda */
+    --estante-vao: 80px;      /* espaço entre a estante e o conteúdo; a busca do topo começa onde ele termina */
     --altura-topo: 98px;      /* altura do header fixo; o JavaScript mede a real */
 }
 
@@ -198,7 +200,10 @@ p {
 }
 
 .topo-interno {
-    display: flex;
+    /* mesma grade da página: a marca ocupa a largura da estante + o vão,
+       então a busca começa alinhada com o banner principal */
+    display: grid;
+    grid-template-columns: calc(var(--estante-largura) + var(--estante-vao) - 32px) minmax(0, 1fr) auto;
     align-items: center;
     gap: 32px;
     max-width: var(--largura);
@@ -208,14 +213,23 @@ p {
 
 .marca {
     display: flex;
-    flex-direction: column;
+    justify-self: start; /* o link fica do tamanho do logo + nome, não da coluna */
+    align-items: center;
+    gap: 14px;
     text-decoration: none;
     flex-shrink: 0;
 }
 
+.marca-logo {
+    width: 62px;
+    height: 54px;
+    flex-shrink: 0;
+}
+
 .marca-nome {
-    font: 700 var(--t-25) / 1.1 var(--serif);
-    letter-spacing: -0.01em;
+    font: 700 var(--t-25) / 1.1 var(--sans);
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
 }
 
 .busca {
@@ -333,8 +347,8 @@ p {
 
 .com-estante {
     display: grid;
-    grid-template-columns: 280px minmax(0, 1fr);
-    gap: 80px;
+    grid-template-columns: var(--estante-largura) minmax(0, 1fr);
+    gap: var(--estante-vao);
     align-items: start;
 }
 
@@ -1889,6 +1903,7 @@ input[type="number"] {
     }
 
     .topo-interno {
+        display: flex;
         flex-wrap: wrap;
         gap: 12px 20px;
     }
@@ -2002,6 +2017,15 @@ input[type="number"] {
     .admin,
     .acesso-form {
         padding: 24px 20px;
+    }
+
+    .marca {
+        gap: 10px;
+    }
+
+    .marca-logo {
+        width: 46px;
+        height: 40px;
     }
 
     .marca-nome {

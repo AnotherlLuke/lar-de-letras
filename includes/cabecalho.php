@@ -27,7 +27,7 @@ $aviso        = pegar_aviso();
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600;7..72,700&display=swap">
-    <link rel="stylesheet" href="css/estilo.css?v=22">
+    <link rel="stylesheet" href="css/estilo.css?v=24">
     <script src="js/script.js?v=11" defer></script>
 </head>
 <body>
@@ -36,6 +36,19 @@ $aviso        = pegar_aviso();
 <header class="topo">
     <div class="topo-interno">
         <a class="marca" href="index.php">
+            <!-- logotipo: casa com um livro aberto dentro, um "L" em cada página -->
+            <svg class="marca-logo" viewBox="0 0 64 56" aria-hidden="true">
+                <g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 18.5V9h6v5.3"/>
+                    <path d="M5 24.7 32 6l27 18.7"/>
+                    <path d="M10 21.2V47h18q4 3 8 0h18V21.2"/>
+                    <path d="M32 27.5q-8-4.5-18-1.5v18.5q10-3 18 1.5q8-4.5 18-1.5V26q-10-3-18 1.5V46"/>
+                </g>
+                <g fill="currentColor" font-family="Literata, Georgia, serif" font-weight="600" font-size="13" text-anchor="middle">
+                    <text x="23.5" y="41">L</text>
+                    <text x="40.5" y="41">L</text>
+                </g>
+            </svg>
             <span class="marca-nome">Lar de Letras</span>
         </a>
 
